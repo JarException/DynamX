@@ -291,6 +291,25 @@ public class CommonEventHandler {
         }
     }
 
+    /**
+     * to prevent players from being added each time and not getting removed (physics would call this players)
+     * @param event - PlayerLoggedOutEvent
+     */
+    @SubscribeEvent
+    public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
+        EntityPlayer player = event.player;
+        if (DynamXContext.getPlayerToCollision().containsKey(player)) {
+            schedule(new TaskScheduler.ScheduledTask((short) 20) {
+                @Override
+                public void run() {
+                    if (DynamXContext.getPlayerToCollision().containsKey(player)) {
+                        DynamXContext.getPlayerToCollision().remove(player).removeFromWorld(true);
+                    }
+                }
+            });
+        }
+    }
+
     @SubscribeEvent
     public void onPlayerDied(LivingDeathEvent e) {
         if (e.getEntity() instanceof EntityPlayer && DynamXContext.getPlayerToCollision().containsKey(e.getEntity())) {
