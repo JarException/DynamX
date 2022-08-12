@@ -261,4 +261,20 @@ public abstract class BasePhysicsWorld implements IPhysicsWorld {
         getTerrainManager().onWorldUnload();
         DynamXContext.setPhysicsWorld(null);
     }
+
+    public Set<PhysicsCollisionObject> getCollisionObjects() {
+        return this.collisionObjects;
+    }
+
+    public Set<PhysicsVehicle> getVehicles() {
+        return this.vehicles;
+    }
+
+    public Set<PhysicsJoint> getJoints() {
+        return this.joints;
+    }
+
+    public List<PhysicsEntity<?>> getEntities() {
+        return this.entities;
+    }
 }
