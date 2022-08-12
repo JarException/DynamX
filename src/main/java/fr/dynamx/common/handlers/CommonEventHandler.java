@@ -1,11 +1,15 @@
 package fr.dynamx.common.handlers;
 
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 import fr.dynamx.api.contentpack.object.IInfoOwner;
 import fr.dynamx.api.contentpack.object.render.IResourcesOwner;
 import fr.dynamx.api.entities.IModuleContainer;
 import fr.dynamx.api.events.VehicleEntityEvent;
 import fr.dynamx.api.network.EnumPacketTarget;
+import fr.dynamx.api.physics.BulletShapeType;
+import fr.dynamx.api.physics.IPhysicsWorld;
 import fr.dynamx.common.DynamXContext;
 import fr.dynamx.common.DynamXMain;
 import fr.dynamx.common.blocks.DynamXBlock;
@@ -21,6 +25,7 @@ import fr.dynamx.common.network.packets.MessageSyncConfig;
 import fr.dynamx.common.network.sync.MessageSeatsSync;
 import fr.dynamx.common.physics.player.PlayerPhysicsHandler;
 import fr.dynamx.common.physics.terrain.cache.TerrainFile;
+import fr.dynamx.common.physics.world.BasePhysicsWorld;
 import fr.dynamx.server.network.ServerPhysicsSyncManager;
 import fr.dynamx.utils.DynamXConfig;
 import fr.dynamx.utils.DynamXConstants;
@@ -36,10 +41,12 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -48,9 +55,11 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
@@ -77,6 +86,76 @@ public class CommonEventHandler {
                     }
                 }
             });
+        }
+    }
+
+    @SideOnly(Side.SERVER)
+    @SubscribeEvent
+    public void onPlayerChat(ServerChatEvent event) {
+        if(!event.getMessage().startsWith(".dynamx")) return;
+        EntityPlayer player = event.getPlayer();
+        event.setCanceled(true);
+        event.setResult(Event.Result.DENY);
+        String[] args = event.getMessage().split(" ");
+        if(args.length < 2) {
+            player.sendMessage(new TextComponentString(".dynamx [debug, info]"));
+            return;
+        }
+        if(args[1].equalsIgnoreCase("debug")) {
+            if(args.length < 3) {
+                player.sendMessage(new TextComponentString(".dynamx debug [statistics]"));
+                return;
+            }
+            if(args[2].equalsIgnoreCase("statistics")) {
+                try {
+                    IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
+                    if(iPhysicsWorld instanceof BasePhysicsWorld) {
+                        BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
+                        player.sendMessage(new TextComponentString("---------"));
+                        player.sendMessage(new TextComponentString(world.getCollisionObjects().size() + " Collision Objects"));
+                        player.sendMessage(new TextComponentString(world.getVehicles().size() + " Vehicle"));
+                        player.sendMessage(new TextComponentString(world.getEntities().size() + " Entities"));
+                        player.sendMessage(new TextComponentString(world.getJoints().size() + " Joints"));
+                    } else {
+                        player.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
+                    }
+                } catch(Exception exception) {
+                    player.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
+                }
+            }
+        } else if(args[1].equalsIgnoreCase("info")) {
+            if(args.length < 3) {
+                player.sendMessage(new TextComponentString(".dynamx info [collisionobjects]"));
+                return;
+            }
+            if(args[2].equalsIgnoreCase("collisionobjects")) {
+                try {
+                    IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
+                    if(iPhysicsWorld instanceof BasePhysicsWorld) {
+                        BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
+                        List<PhysicsCollisionObject> objects = new ArrayList<>(world.getCollisionObjects());
+                        player.sendMessage(new TextComponentString("size -> " + objects.size()));
+                        for(PhysicsCollisionObject object : objects) {
+                            if(object instanceof PhysicsRigidBody) {
+                                PhysicsRigidBody body = (PhysicsRigidBody) object;
+                                Object userObject = body.getUserObject();
+                                if(userObject instanceof BulletShapeType<?>) {
+                                    BulletShapeType<?> bulletShapeType = (BulletShapeType<?>) userObject;
+                                    player.sendMessage(new TextComponentString("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName()));
+                                    System.out.println("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName());
+                                }
+                                continue;
+                            }
+
+                            player.sendMessage(new TextComponentString("nativeId -> " + object.nativeId() + " | class = " + object.getClass().getSimpleName()));
+                        }
+                    } else {
+                        player.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
+                    }
+                } catch(Exception ignored) {
+                    player.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
+                }
+            }
         }
     }
 
