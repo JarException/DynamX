@@ -65,6 +65,22 @@ public class CommonEventHandler {
     public static final ResourceLocation CAPABILITY_LOCATION = new ResourceLocation(DynamXConstants.ID, "chunkaabb");
 
     @SubscribeEvent
+    public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
+        EntityPlayer player = event.player;
+        if (DynamXContext.getPlayerToCollision().containsKey(player)) {
+            schedule(new TaskScheduler.ScheduledTask((short) 20) {
+                @Override
+                public void run() {
+                    if (DynamXContext.getPlayerToCollision().containsKey(player)) {
+                        DynamXContext.getPlayerToCollision().remove(player).removeFromWorld(true);
+                        System.out.println("PLAYER WAS REMOVED");
+                    }
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Chunk> event) {
         event.addCapability(CAPABILITY_LOCATION, new DynamXChunkDataProvider());
     }
