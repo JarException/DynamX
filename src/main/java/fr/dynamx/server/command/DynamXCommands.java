@@ -131,6 +131,82 @@ public class DynamXCommands extends CommandBase
         addCommand(new ISubCommand() {
             @Override
             public String getName() {
+                return "debug";
+            }
+
+            @Override
+            public String getUsage() {
+                return "debug halt";
+            }
+
+            @Override
+            public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+                if(args.length < 1) {
+                    sender.sendMessage(new TextComponentString(".dynamx [debug, info]"));
+                    return;
+                }
+                if(args[0].equalsIgnoreCase("debug")) {
+                    if(args.length < 2) {
+                        sender.sendMessage(new TextComponentString(".dynamx debug [statistics]"));
+                        return;
+                    }
+                    if(args[1].equalsIgnoreCase("statistics")) {
+                        try {
+                            IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
+                            if(iPhysicsWorld instanceof BasePhysicsWorld) {
+                                BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
+                                sender.sendMessage(new TextComponentString("---------"));
+                                sender.sendMessage(new TextComponentString(world.getCollisionObjects().size() + " Collision Objects"));
+                                sender.sendMessage(new TextComponentString(world.getVehicles().size() + " Vehicle"));
+                                sender.sendMessage(new TextComponentString(world.getEntities().size() + " Entities"));
+                                sender.sendMessage(new TextComponentString(world.getJoints().size() + " Joints"));
+                                sender.sendMessage(new TextComponentString(DynamXContext.getPlayerToCollision().size() + " Collision Player"));
+                            } else {
+                                sender.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
+                            }
+                        } catch(Exception exception) {
+                            sender.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
+                        }
+                    }
+                } else if(args[0].equalsIgnoreCase("info")) {
+                    if(args.length < 2) {
+                        sender.sendMessage(new TextComponentString(".dynamx info [collisionobjects]"));
+                        return;
+                    }
+                    if(args[1].equalsIgnoreCase("collisionobjects")) {
+                        try {
+                            IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
+                            if(iPhysicsWorld instanceof BasePhysicsWorld) {
+                                BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
+                                List<PhysicsCollisionObject> objects = new ArrayList<>(world.getCollisionObjects());
+                                sender.sendMessage(new TextComponentString("size -> " + objects.size()));
+                                for(PhysicsCollisionObject object : objects) {
+                                    if(object instanceof PhysicsRigidBody) {
+                                        PhysicsRigidBody body = (PhysicsRigidBody) object;
+                                        Object userObject = body.getUserObject();
+                                        if(userObject instanceof BulletShapeType<?>) {
+                                            BulletShapeType<?> bulletShapeType = (BulletShapeType<?>) userObject;
+                                            sender.sendMessage(new TextComponentString("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName()));
+                                            //System.out.println("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName());
+                                        }
+                                        continue;
+                                    }
+
+                                    sender.sendMessage(new TextComponentString("nativeId -> " + object.nativeId() + " | class = " + object.getClass().getSimpleName()));
+                                }
+                            } else {
+                                sender.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
+                            }
+                        } catch(Exception ignored) {
+                            sender.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
+                        }
+                    }
+                }
+            }
+        });
+        addCommand(new ISubCommand() {
+            @Override
+            public String getName() {
                 return "disablemappool";
             }
 
