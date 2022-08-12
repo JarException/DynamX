@@ -116,6 +116,7 @@ public class CommonEventHandler {
                         player.sendMessage(new TextComponentString(world.getVehicles().size() + " Vehicle"));
                         player.sendMessage(new TextComponentString(world.getEntities().size() + " Entities"));
                         player.sendMessage(new TextComponentString(world.getJoints().size() + " Joints"));
+                        player.sendMessage(new TextComponentString(DynamXContext.getPlayerToCollision().size() + " Collision Player"));
                     } else {
                         player.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
                     }
@@ -142,7 +143,7 @@ public class CommonEventHandler {
                                 if(userObject instanceof BulletShapeType<?>) {
                                     BulletShapeType<?> bulletShapeType = (BulletShapeType<?>) userObject;
                                     player.sendMessage(new TextComponentString("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName()));
-                                    System.out.println("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName());
+                                    //System.out.println("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName());
                                 }
                                 continue;
                             }
