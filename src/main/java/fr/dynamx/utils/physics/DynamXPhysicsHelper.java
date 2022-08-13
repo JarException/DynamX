@@ -77,6 +77,8 @@ public class DynamXPhysicsHelper
     public static PhysicsRaycastResult castRay(Vector3f from, Vector3f dir, Predicate<EnumBulletShapeType> ignoredBody) {
         Vector3fPool.openPool();
         List<PhysicsRayTestResult> results = new LinkedList<>();
+        if(DynamXContext.getPhysicsWorld() == null) return null;
+
         DynamXContext.getPhysicsWorld().getDynamicsWorld().rayTest(from, dir, results);
 
 
