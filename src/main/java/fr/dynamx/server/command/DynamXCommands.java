@@ -1,7 +1,14 @@
 package fr.dynamx.server.command;
 
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import fr.dynamx.api.physics.BulletShapeType;
+import fr.dynamx.api.physics.IPhysicsWorld;
+import fr.dynamx.common.DynamXContext;
 import fr.dynamx.common.physics.entities.modules.EnginePhysicsHandler;
 import fr.dynamx.common.physics.terrain.cache.TerrainFile;
+import fr.dynamx.common.physics.terrain.element.CompoundBoxTerrainElement;
+import fr.dynamx.common.physics.world.BasePhysicsWorld;
 import fr.dynamx.utils.DynamXConfig;
 import fr.dynamx.utils.DynamXConstants;
 import fr.dynamx.utils.optimization.PooledHashMap;
@@ -167,38 +174,64 @@ public class DynamXCommands extends CommandBase
                         } catch(Exception exception) {
                             sender.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
                         }
-                    }
-                } else if(args[0].equalsIgnoreCase("info")) {
-                    if(args.length < 2) {
-                        sender.sendMessage(new TextComponentString(".dynamx info [collisionobjects]"));
-                        return;
-                    }
-                    if(args[1].equalsIgnoreCase("collisionobjects")) {
-                        try {
-                            IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
-                            if(iPhysicsWorld instanceof BasePhysicsWorld) {
-                                BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
-                                List<PhysicsCollisionObject> objects = new ArrayList<>(world.getCollisionObjects());
-                                sender.sendMessage(new TextComponentString("size -> " + objects.size()));
-                                for(PhysicsCollisionObject object : objects) {
-                                    if(object instanceof PhysicsRigidBody) {
-                                        PhysicsRigidBody body = (PhysicsRigidBody) object;
-                                        Object userObject = body.getUserObject();
-                                        if(userObject instanceof BulletShapeType<?>) {
-                                            BulletShapeType<?> bulletShapeType = (BulletShapeType<?>) userObject;
-                                            sender.sendMessage(new TextComponentString("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName()));
-                                            //System.out.println("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName());
+                    } else if(args[1].equalsIgnoreCase("info")) {
+                        if(args.length < 3) {
+                            sender.sendMessage(new TextComponentString(".dynamx debug info [collisionobjects]"));
+                            return;
+                        }
+                        if(args[2].equalsIgnoreCase("collisionobjects")) {
+                            try {
+                                IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
+                                if(iPhysicsWorld instanceof BasePhysicsWorld) {
+                                    BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
+                                    List<PhysicsCollisionObject> objects = new ArrayList<>(world.getCollisionObjects());
+                                    sender.sendMessage(new TextComponentString("size -> " + objects.size()));
+                                    for(PhysicsCollisionObject object : objects) {
+                                        if(object instanceof PhysicsRigidBody) {
+                                            PhysicsRigidBody body = (PhysicsRigidBody) object;
+                                            Object userObject = body.getUserObject();
+                                            if(userObject instanceof BulletShapeType<?>) {
+                                                BulletShapeType<?> bulletShapeType = (BulletShapeType<?>) userObject;
+                                                sender.sendMessage(new TextComponentString("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName()));
+                                                //System.out.println("PhysicsRigedBody | UserObject -> " + bulletShapeType.getType().name() + " | " + bulletShapeType.getObjectIn().getClass().getSimpleName());
+                                            }
+                                            continue;
                                         }
-                                        continue;
-                                    }
 
-                                    sender.sendMessage(new TextComponentString("nativeId -> " + object.nativeId() + " | class = " + object.getClass().getSimpleName()));
+                                        sender.sendMessage(new TextComponentString("nativeId -> " + object.nativeId() + " | class = " + object.getClass().getSimpleName()));
+                                    }
+                                } else {
+                                    sender.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
                                 }
-                            } else {
-                                sender.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
+                            } catch(Exception ignored) {
+                                sender.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
                             }
-                        } catch(Exception ignored) {
-                            sender.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
+                        } else if(args[2].equalsIgnoreCase("terrain")) {
+                            try {
+                                IPhysicsWorld iPhysicsWorld = DynamXContext.getPhysicsWorld();
+                                if(iPhysicsWorld instanceof BasePhysicsWorld) {
+                                    BasePhysicsWorld world = (BasePhysicsWorld) iPhysicsWorld;
+                                    List<PhysicsCollisionObject> objects = new ArrayList<>(world.getCollisionObjects());
+                                    sender.sendMessage(new TextComponentString("size -> " + objects.size()));
+                                    for(PhysicsCollisionObject object : objects) {
+                                        if(object instanceof PhysicsRigidBody) {
+                                            PhysicsRigidBody body = (PhysicsRigidBody) object;
+                                            Object userObject = body.getUserObject();
+                                            if(userObject instanceof BulletShapeType<?>) {
+                                                BulletShapeType<?> bulletShapeType = (BulletShapeType<?>) userObject;
+                                                if(bulletShapeType.getObjectIn() instanceof CompoundBoxTerrainElement) {
+                                                    CompoundBoxTerrainElement element = (CompoundBoxTerrainElement) bulletShapeType.getObjectIn();
+                                                    element.toString();
+                                                }
+                                            };
+                                        }
+                                    }
+                                } else {
+                                    sender.sendMessage(new TextComponentString("Physics World != Base Physics World ):"));
+                                }
+                            } catch(Exception ignored) {
+                                sender.sendMessage(new TextComponentString("fehler aufgetreten du hurensohn"));
+                            }
                         }
                     }
                 }
