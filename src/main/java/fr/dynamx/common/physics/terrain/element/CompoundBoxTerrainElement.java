@@ -44,7 +44,7 @@ public class CompoundBoxTerrainElement implements ITerrainElement {
 
     @Override
     public String toString() {
-        System.out.println("===============");
+        /*System.out.println("===============");
         System.out.println("Box data " + this.hashCode());
         System.out.println("Collisions " + collisions);
         System.out.println("--------- Collisions stats: ---------");
@@ -75,7 +75,7 @@ public class CompoundBoxTerrainElement implements ITerrainElement {
                 System.out.println(m + " : " + m.countTriangles() + " " + m.countVertices());
             }
         }
-        System.out.println("===============");
+        System.out.println("===============");*/
         return "CompoundBoxTerrainElement{" +
                 "collisions: " + collisions.size() +
                 '}';
