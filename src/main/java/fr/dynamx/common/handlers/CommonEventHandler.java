@@ -74,22 +74,6 @@ public class CommonEventHandler {
     public static final ResourceLocation CAPABILITY_LOCATION = new ResourceLocation(DynamXConstants.ID, "chunkaabb");
 
     @SubscribeEvent
-    public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
-        EntityPlayer player = event.player;
-        if (DynamXContext.getPlayerToCollision().containsKey(player)) {
-            schedule(new TaskScheduler.ScheduledTask((short) 20) {
-                @Override
-                public void run() {
-                    if (DynamXContext.getPlayerToCollision().containsKey(player)) {
-                        DynamXContext.getPlayerToCollision().remove(player).removeFromWorld(true);
-                        System.out.println("PLAYER WAS REMOVED");
-                    }
-                }
-            });
-        }
-    }
-
-    @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Chunk> event) {
         event.addCapability(CAPABILITY_LOCATION, new DynamXChunkDataProvider());
     }
@@ -317,10 +301,9 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
-    public void onPlayerDied(LivingDeathEvent e) {
-        if (e.getEntity() instanceof EntityPlayer && DynamXContext.getPlayerToCollision().containsKey(e.getEntity())) {
-            DynamXContext.getPlayerToCollision().remove(e.getEntity()).removeFromWorld(true);
-        }
+    public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
+        if (DynamXContext.getPlayerToCollision().containsKey(event.player))
+            DynamXContext.getPlayerToCollision().get(event.player).removeFromWorld(true);
     }
 
     @SubscribeEvent
