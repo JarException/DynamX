@@ -5,11 +5,14 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import fr.dynamx.api.contentpack.object.IShapeProvider;
 import fr.dynamx.api.contentpack.object.part.BasePart;
+import fr.dynamx.api.entities.VehicleEntityProperties;
 import fr.dynamx.api.obj.ObjModelPath;
 import fr.dynamx.api.physics.EnumBulletShapeType;
 import fr.dynamx.common.contentpack.DynamXObjectLoaders;
 import fr.dynamx.common.contentpack.PackInfo;
+import fr.dynamx.common.entities.BaseVehicleEntity;
 import fr.dynamx.common.entities.PackPhysicsEntity;
+import fr.dynamx.common.entities.modules.EngineModule;
 import fr.dynamx.utils.maths.DynamXGeometry;
 import fr.dynamx.utils.optimization.Vector3fPool;
 import fr.dynamx.utils.physics.DynamXPhysicsHelper;
@@ -55,6 +58,17 @@ public class DynamXUtils {
 
     public static BlockPos readBlockPos(ByteBuf buf) {
         return new BlockPos(buf.readDouble(), buf.readDouble(), buf.readDouble());
+    }
+
+    //DUPLICATE (function is already in the BasicsAddon)
+    public static int getSpeed(BaseVehicleEntity<?> entity) {
+        EngineModule engine = entity.getModuleByType(EngineModule.class);
+        if(engine != null){
+            float[] ab = engine.getEngineProperties();
+            if(ab == null) return 0;
+            return (int) Math.abs(ab[VehicleEntityProperties.EnumEngineProperties.SPEED.ordinal()]);
+        }
+        return -1;
     }
 
     public static void writeVector3f(ByteBuf buf, Vector3f vector3f) {
