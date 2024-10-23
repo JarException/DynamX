@@ -52,11 +52,11 @@ public class GuiBlockCustomization extends GuiFrame {
 
         preview = new GuiPanel() {
             @Override
-            public void drawForeground(int mouseX, int mouseY, float partialTicks) {
-                super.drawForeground(mouseX, mouseY, partialTicks);
+            public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissors) {
+                super.drawForeground(mouseX, mouseY, partialTicks, enableScissors);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                int x = preview.getRenderMinX() + preview.getWidth();
-                int y = preview.getRenderMinY() + preview.getHeight();
+                float x = preview.getRenderMinX() + preview.getWidth();
+                float y = preview.getRenderMinY() + preview.getHeight();
                 drawModelOnScreen(x / 1.2f - 30, y / 1.2f - 30, mouseX, mouseY, model);
 
             }
@@ -121,18 +121,7 @@ public class GuiBlockCustomization extends GuiFrame {
         add(preview);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-    }
-
-    @Override
-    public void drawForeground(int mouseX, int mouseY, float partialTicks) {
-        super.drawForeground(mouseX, mouseY, partialTicks);
-    }
-
-    BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-
+    private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
     public void drawModelOnScreen(float posX, float posY, float mouseX, float mouseY, DxModelRenderer model) {
         handleScaleAndRotation();

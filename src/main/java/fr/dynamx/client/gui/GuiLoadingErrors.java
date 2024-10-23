@@ -35,8 +35,8 @@ public class GuiLoadingErrors extends GuiFrame {
 
         summary = new GuiScrollPane() {
             @Override
-            public List<GuiComponent> getReversedChildComponents() {
-                List<GuiComponent> list = super.getReversedChildComponents();
+            public List<GuiComponent<?>> getReversedChildComponents() {
+                List<GuiComponent<?>> list = super.getReversedChildComponents();
                 list.sort(GuiComponent::compareTo);
                 Collections.reverse(list);
                 return list;
@@ -50,7 +50,7 @@ public class GuiLoadingErrors extends GuiFrame {
     }
 
     private void fillSummary(String filter) {
-        summary.removeAllChilds();
+        summary.removeAllChildren();
         summary.add(new GuiLabel(TextFormatting.DARK_AQUA + "Errors while loading DynamX and the content packs").getStyle().setPaddingLeft(2).setPaddingTop(2).getOwner());
         summary.add(new GuiLabel(TextFormatting.GRAY + "Click on any category to view it, press escape to go back").getStyle().setPaddingLeft(2).setPaddingTop(2).getOwner());
 
@@ -120,7 +120,7 @@ public class GuiLoadingErrors extends GuiFrame {
             }));
             label.setText(text.toString());
             label.setCssId("label-deployed");
-            height = mc.fontRenderer.FONT_HEIGHT * GuiAPIClientHelper.trimTextToWidth(text.toString(), getWidth()).size() + 10;
+            height = mc.fontRenderer.FONT_HEIGHT * GuiAPIClientHelper.trimTextToWidth(text.toString(), (int) getWidth()).size() + 10;
         } else {
             long fatals = errorListPerObject.stream().filter(er -> er.getLevel() == ErrorLevel.FATAL).count();
             if (fatals > 0)
@@ -152,7 +152,7 @@ public class GuiLoadingErrors extends GuiFrame {
             private ComponentStyleManager lastElement;
 
             @Override
-            public int getY(ComponentStyleManager target) {
+            public float getY(ComponentStyleManager target) {
                 if (!seenElements.containsKey(target)) {
                     if (lastElement != null)
                         seenElements.put(target, (int) (lastElement.getYPos().getRawValue() + lastElement.getHeight().getRawValue() + 2));
@@ -164,7 +164,7 @@ public class GuiLoadingErrors extends GuiFrame {
             }
 
             @Override
-            public int getHeight(ComponentStyleManager target) {
+            public float getHeight(ComponentStyleManager target) {
                 return heightMap.containsKey(target.getOwner()) ? heightMap.get(target.getOwner()) : super.getHeight(target);
             }
 
@@ -196,7 +196,7 @@ public class GuiLoadingErrors extends GuiFrame {
                     deployObjs.add(id);
                 heightMap.put(label, setDeployed(label, s1, errorListPerObject, deployAll != deployObjs.contains(id)));
                 errorsPanel.getLayout().clear();
-                errorsPanel.getStyle().refreshCss(false, "layout change");
+                errorsPanel.getStyle().refreshCss(false);
             }));
             i.getAndIncrement();
         });

@@ -94,8 +94,8 @@ public class GuiWrenchSelection extends GuiFrame {
     List<String> infos = new ArrayList<>();
 
     @Override
-    public void drawBackground(int mouseX, int mouseY, float partialTicks) {
-        super.drawBackground(mouseX, mouseY, partialTicks);
+    public void drawBackground(int mouseX, int mouseY, float partialTicks, boolean enableScissors) {
+        super.drawBackground(mouseX, mouseY, partialTicks, enableScissors);
         drawDisk(getWidth() / 2f, getHeight() / 2f, 110, 60, Color.BLACK, 0.5f);
 
         infos.clear();
@@ -113,8 +113,8 @@ public class GuiWrenchSelection extends GuiFrame {
 
     private WrenchMode getModeWithMousePos(int mouseX, int mouseY) {
         //TODO GENERALIZE MODE FINDING
-        int mx = mouseX - getWidth() / 2;
-        int my = mouseY - getHeight() / 2;
+        float mx = mouseX - getWidth() / 2;
+        float my = mouseY - getHeight() / 2;
         int maxModes = WrenchMode.getWrenchModes().size() - 1;
         double theta = FastMath.atan2(my, mx);
         theta += FastMath.PI / maxModes;

@@ -124,7 +124,7 @@ public class ClientEventHandler {
     public void onDismount(VehicleEntityEvent.EntityDismount event) {
         if (event.getEntityDismounted() instanceof EntityPlayer) {
             if (((EntityPlayer) event.getEntityDismounted()).isUser()) {
-                ACsGuiApi.closeHudGui();
+                ACsGuiApi.closeHudGui(VehicleHud.class);
             }
         }
     }

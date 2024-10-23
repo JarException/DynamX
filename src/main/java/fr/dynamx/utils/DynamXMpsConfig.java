@@ -1,14 +1,7 @@
 package fr.dynamx.utils;
 
-import fr.aym.acslib.api.services.mps.ModProtectionConfig;
-import fr.aym.acslib.api.services.mps.ModProtectionContainer;
 import fr.aym.acslib.api.services.mps.MpsUrlFactory;
 import fr.aym.mps.core.BasicMpsConfig;
-import fr.aym.mps.utils.SSLHelper;
-
-import javax.annotation.Nullable;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static fr.dynamx.utils.DynamXConstants.*;
 

@@ -27,8 +27,8 @@ public class CircleCounterPanel extends GuiPanel {
     }
 
     @Override
-    public void drawBackground(int mouseX, int mouseY, float partialTicks) {
-        super.drawBackground(mouseX, mouseY, partialTicks);
+    public void drawBackground(int mouseX, int mouseY, float partialTicks, boolean enableScissors) {
+        super.drawBackground(mouseX, mouseY, partialTicks, enableScissors);
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
