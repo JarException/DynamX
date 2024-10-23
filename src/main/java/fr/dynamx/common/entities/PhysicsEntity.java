@@ -143,12 +143,16 @@ public abstract class PhysicsEntity<T extends AbstractEntityPhysicsHandler<?, ?>
         // Network Init
         synchronizer = DynamXMain.proxy.getNetHandlerForEntity(this);
         usesPhysicsWorld = DynamXContext.usesPhysicsWorld(world);
+
+        ignoreFrustumCheck = true;
     }
 
     public PhysicsEntity(World world, Vector3f pos, float spawnRotationAngle) {
         this(world);
         setPosition(pos.x, pos.y, pos.z);
         rotationYaw = spawnRotationAngle;
+
+        ignoreFrustumCheck = true;
     }
 
     @Override

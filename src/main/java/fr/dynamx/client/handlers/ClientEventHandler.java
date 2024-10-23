@@ -353,7 +353,7 @@ public class ClientEventHandler {
                 CameraSystem.drawDebug();
             }
         }
-        renderBigEntities((float) partialTicks);
+        //renderBigEntities((float) partialTicks);
 
         /*
         GlStateManager.pushMatrix();
@@ -395,7 +395,15 @@ public class ClientEventHandler {
          */
     }
 
-    private static void renderBigEntities(float partialTicks) {
+    public static void resetBigEntities() {
+        for (Entity e : MC.world.loadedEntityList) {
+            if (e instanceof PhysicsEntity) {
+                ((PhysicsEntity<?>) e).wasRendered = false;
+            }
+        }
+    }
+
+    public static void renderBigEntities(float partialTicks) {
         boolean setup = false;
         Entity entity = MC.getRenderViewEntity();
         ICamera icamera = null;

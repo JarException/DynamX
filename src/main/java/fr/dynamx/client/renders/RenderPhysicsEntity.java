@@ -15,6 +15,7 @@ import fr.dynamx.utils.optimization.GlQuaternionPool;
 import fr.dynamx.utils.optimization.QuaternionPool;
 import fr.dynamx.utils.optimization.Vector3fPool;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -46,6 +47,13 @@ public abstract class RenderPhysicsEntity<T extends PhysicsEntity<?>> extends Re
         Quaternion q = ClientDynamXUtils.computeInterpolatedGlQuaternion(entity.prevRenderRotation, entity.renderRotation, partialTicks);
         GlStateManager.rotate(q);
         return q;
+    }
+
+    @Override
+    public boolean shouldRender(T livingEntity, ICamera camera, double camX, double camY, double camZ) {
+        boolean b = super.shouldRender(livingEntity, camera, camX, camY, camZ);
+        System.out.println("Should render " + livingEntity + " " + b + " " + camera + " " + camX + " " + camY + " " + camZ +" "+ MinecraftForgeClient.getRenderPass());
+        return b;
     }
 
     @Override
