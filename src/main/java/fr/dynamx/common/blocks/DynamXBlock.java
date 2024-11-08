@@ -1,6 +1,7 @@
 package fr.dynamx.common.blocks;
 
 import com.jme3.math.Vector3f;
+import fr.dynamx.api.blocks.IBlockEntityModule;
 import fr.dynamx.api.contentpack.object.IDynamXItem;
 import fr.dynamx.api.contentpack.object.part.InteractivePart;
 import fr.dynamx.api.contentpack.object.render.Enum3DRenderLocation;
@@ -258,6 +259,7 @@ public class DynamXBlock<T extends BlockObject<?>> extends Block implements IDyn
         TEDynamXBlock te = (TEDynamXBlock) worldIn.getTileEntity(pos);
         if (te != null) {
             te.removeChunkCollisions();
+            te.getModules().forEach(IBlockEntityModule::onBlockBreak);
         } else {
             // This should not happen, but, just in case fallback and clear the block's chunk
             DynamXChunkData data = worldIn.getChunk(pos).getCapability(DynamXChunkDataProvider.DYNAMX_CHUNK_DATA_CAPABILITY, null);

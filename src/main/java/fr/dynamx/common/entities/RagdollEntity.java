@@ -4,6 +4,7 @@ import com.jme3.bullet.joints.Constraint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import fr.dynamx.api.contentpack.object.IPartContainer;
 import fr.dynamx.api.entities.modules.AttachModule;
 import fr.dynamx.api.entities.modules.IPhysicsModule;
 import fr.dynamx.api.entities.modules.ModuleListBuilder;
@@ -195,6 +196,11 @@ public class RagdollEntity extends ModularPhysicsEntity<RagdollPhysics<?>> imple
         b.offset(physicsPosition);
         rawBoxes.add(b);
         return rawBoxes;
+    }
+
+    @Override
+    public <A extends IPartContainer<?>> A getPackInfo() {
+        return null;
     }
 
     @Override

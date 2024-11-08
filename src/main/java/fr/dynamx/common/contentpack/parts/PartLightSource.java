@@ -22,6 +22,7 @@ import fr.dynamx.client.renders.scene.SceneBuilder;
 import fr.dynamx.client.renders.scene.node.SceneNode;
 import fr.dynamx.client.renders.scene.node.SimpleNode;
 import fr.dynamx.common.DynamXContext;
+import fr.dynamx.common.blocks.TEDynamXBlock;
 import fr.dynamx.common.contentpack.type.objects.AbstractItemObject;
 import fr.dynamx.common.entities.PackPhysicsEntity;
 import fr.dynamx.common.entities.modules.AbstractLightsModule;
@@ -151,6 +152,11 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
     }
 
     @Override
+    public void addBlockModules(TEDynamXBlock blockEntity, ModuleListBuilder modules) {
+        addModules(null, modules);
+    }
+
+    @Override
     public String getName() {
         return "PartLightSource with name " + getPartName();
     }
@@ -245,7 +251,7 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
             /* Rendering light sources */
             boolean isEntity = context instanceof BaseRenderContext.EntityRenderContext && ((BaseRenderContext.EntityRenderContext) context).getEntity() != null;
             AbstractLightsModule lights = isEntity ? ((BaseRenderContext.EntityRenderContext) context).getEntity().getModuleByType(AbstractLightsModule.class) :
-                    context instanceof BaseRenderContext.BlockRenderContext && ((BaseRenderContext.BlockRenderContext) context).getTileEntity() != null ? ((BaseRenderContext.BlockRenderContext) context).getTileEntity().getLightsModule() : null;
+                    context instanceof BaseRenderContext.BlockRenderContext && ((BaseRenderContext.BlockRenderContext) context).getTileEntity() != null ? ((BaseRenderContext.BlockRenderContext) context).getTileEntity().getModuleByType(AbstractLightsModule.class) : null;
             transformToRotationPoint();
             /* Rendering light source */
             LightObject onLightObject = null;

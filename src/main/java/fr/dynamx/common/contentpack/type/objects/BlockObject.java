@@ -8,12 +8,14 @@ import fr.dynamx.api.contentpack.registry.IPackFilePropertyFixer;
 import fr.dynamx.api.contentpack.registry.PackFileProperty;
 import fr.dynamx.api.contentpack.registry.SubInfoTypeRegistries;
 import fr.dynamx.api.dxmodel.EnumDxModelFormats;
+import fr.dynamx.api.entities.modules.ModuleListBuilder;
 import fr.dynamx.api.events.CreatePackItemEvent;
 import fr.dynamx.api.events.client.BuildSceneGraphEvent;
 import fr.dynamx.client.renders.model.renderer.ObjObjectRenderer;
 import fr.dynamx.client.renders.scene.node.BlockNode;
 import fr.dynamx.client.renders.scene.node.SceneNode;
 import fr.dynamx.common.blocks.DynamXBlock;
+import fr.dynamx.common.blocks.TEDynamXBlock;
 import fr.dynamx.common.contentpack.loader.InfoList;
 import fr.dynamx.common.contentpack.parts.ILightOwner;
 import fr.dynamx.common.contentpack.parts.PartLightSource;
@@ -176,5 +178,11 @@ public class BlockObject<T extends BlockObject<?>> extends AbstractProp<T> imple
     @Override
     public PartLightSource getLightSource(String objectName) {
         return lightSources.get(objectName);
+    }
+
+    public void addModules(TEDynamXBlock blockEntity, ModuleListBuilder modules) {
+        getSubProperties().forEach(sub -> sub.addBlockModules(blockEntity, modules));
+        getAllParts().forEach(sub -> sub.addBlockModules(blockEntity, modules));
+        getLightSources().values().forEach(compoundLight -> compoundLight.addBlockModules(blockEntity, modules));
     }
 }

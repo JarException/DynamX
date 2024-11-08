@@ -7,6 +7,7 @@ import fr.dynamx.api.contentpack.registry.RegisteredSubInfoType;
 import fr.dynamx.api.contentpack.registry.SubInfoTypeRegistries;
 import fr.dynamx.api.entities.modules.ModuleListBuilder;
 import fr.dynamx.common.DynamXMain;
+import fr.dynamx.common.blocks.TEDynamXBlock;
 import fr.dynamx.common.entities.PackPhysicsEntity;
 import fr.dynamx.common.entities.modules.StorageModule;
 import fr.dynamx.utils.DynamXConstants;
@@ -41,6 +42,14 @@ public class PartStorage<T extends ISubInfoTypeOwner<T>> extends InteractivePart
             modules.add(new StorageModule(entity, this));
         else
             modules.getByClass(StorageModule.class).addInventory(entity, this);
+    }
+
+    @Override
+    public void addBlockModules(TEDynamXBlock blockEntity, ModuleListBuilder modules) {
+        if (!modules.hasModuleOfClass(StorageModule.class))
+            modules.add(new StorageModule(blockEntity, blockEntity.getPos(), this));
+        else
+            modules.getByClass(StorageModule.class).addInventory(blockEntity, blockEntity.getPos(), this);
     }
 
     @Override
