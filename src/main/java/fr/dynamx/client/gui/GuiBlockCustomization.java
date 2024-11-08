@@ -6,6 +6,7 @@ import fr.aym.acsguis.component.panel.GuiFrame;
 import fr.aym.acsguis.component.panel.GuiPanel;
 import fr.aym.acsguis.component.textarea.GuiFloatField;
 import fr.aym.acsguis.component.textarea.GuiLabel;
+import fr.aym.acsguis.utils.ComponentRenderContext;
 import fr.dynamx.client.renders.model.renderer.DxModelRenderer;
 import fr.dynamx.common.DynamXContext;
 import fr.dynamx.common.blocks.TEDynamXBlock;
@@ -52,8 +53,8 @@ public class GuiBlockCustomization extends GuiFrame {
 
         preview = new GuiPanel() {
             @Override
-            public void drawForeground(int mouseX, int mouseY, float partialTicks, boolean enableScissors) {
-                super.drawForeground(mouseX, mouseY, partialTicks, enableScissors);
+            public void drawForeground(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
+                super.drawForeground(mouseX, mouseY, partialTicks, renderContext);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 float x = preview.getRenderMinX() + preview.getWidth();
                 float y = preview.getRenderMinY() + preview.getHeight();

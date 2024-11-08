@@ -4,6 +4,7 @@ import com.jme3.math.FastMath;
 import fr.aym.acsguis.api.GuiAPIClientHelper;
 import fr.aym.acsguis.component.layout.GuiScaler;
 import fr.aym.acsguis.component.panel.GuiFrame;
+import fr.aym.acsguis.utils.ComponentRenderContext;
 import fr.dynamx.common.items.tools.ItemWrench;
 import fr.dynamx.common.items.tools.WrenchMode;
 import fr.dynamx.utils.DynamXConstants;
@@ -94,8 +95,8 @@ public class GuiWrenchSelection extends GuiFrame {
     List<String> infos = new ArrayList<>();
 
     @Override
-    public void drawBackground(int mouseX, int mouseY, float partialTicks, boolean enableScissors) {
-        super.drawBackground(mouseX, mouseY, partialTicks, enableScissors);
+    public void drawBackground(int mouseX, int mouseY, float partialTicks, ComponentRenderContext renderContext) {
+        super.drawBackground(mouseX, mouseY, partialTicks, renderContext);
         drawDisk(getWidth() / 2f, getHeight() / 2f, 110, 60, Color.BLACK, 0.5f);
 
         infos.clear();
