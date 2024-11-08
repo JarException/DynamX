@@ -268,6 +268,15 @@ public class DynamXBlock<T extends BlockObject<?>> extends Block implements IDyn
         super.breakBlock(worldIn, pos, state);
     }
 
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        super.getDrops(drops, world, pos, state, fortune);
+        TEDynamXBlock te = (TEDynamXBlock) world.getTileEntity(pos);
+        if (te != null) {
+            te.getModules().forEach(module -> module.getBlockDrops(drops, world, pos, state, fortune));
+        }
+    }
+
     @Nullable
     @Override
     public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {

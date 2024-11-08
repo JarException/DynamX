@@ -25,6 +25,12 @@ public interface IBlockEntityModule extends IBaseModule {
     }
 
     /**
+     * Fills the drops list with the block drops when the block is broken
+     */
+    default void getBlockDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    }
+
+    /**
      * Implement this on you module to listen tile entity updates
      */
     interface IBlockEntityUpdateListener {

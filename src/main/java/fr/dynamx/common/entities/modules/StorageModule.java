@@ -9,13 +9,17 @@ import fr.dynamx.common.entities.IDynamXObject;
 import fr.dynamx.common.entities.PackPhysicsEntity;
 import fr.dynamx.common.physics.entities.PackEntityPhysicsHandler;
 import lombok.Getter;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -60,6 +64,32 @@ public class StorageModule implements IPhysicsModule<PackEntityPhysicsHandler<?,
 
     public IInventory getInventory(byte id) {
         return inventories.get(id);
+    }
+
+    @Override
+    public void getBlockDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        for (InventoryBasic inventory : inventories.values()) {
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    drops.add(stack);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSetDead() {
+        if(!(owner instanceof Entity) || ((Entity) owner).world.isRemote)
+            return;
+        for (InventoryBasic inventory : inventories.values()) {
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    ((Entity) owner).entityDropItem(stack, 0.5F);
+                }
+            }
+        }
     }
 
     @Override
