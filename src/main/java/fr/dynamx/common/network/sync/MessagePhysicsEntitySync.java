@@ -15,7 +15,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * BulletEntity sync packet
@@ -105,8 +107,9 @@ public class MessagePhysicsEntitySync<T extends PhysicsEntity<?>> extends Physic
             //if(log[0])
             //  System.out.println("Read var at "+j[0]+" "+entityId);
             SynchronizedEntityVariableSnapshot<?> v = null;
+            int id = -1;
             try {
-                int id = buf.readInt();
+                id = buf.readInt();
                 v = new SynchronizedEntityVariableSnapshot<>(SynchronizedEntityVariableRegistry.getSerializerMap().get(id), null);
                 if (log[0])
                     System.out.println("Read var at " + j[0] + " " + entityId + " " + v);
@@ -121,7 +124,11 @@ public class MessagePhysicsEntitySync<T extends PhysicsEntity<?>> extends Physic
                 }
                 j[0]++;
             } catch (Exception e) {
-                throw new RuntimeException("Error reading sync packet for " + entityId + " has read " + varsToRead + " reading " + j[0] + " out of " + size + ". Var is " + v, e);
+                final List<String> readVars = varsToRead.entrySet().stream().map(entry ->
+                        SynchronizedEntityVariableRegistry.getSyncVarRegistry().inverse().get(entry.getKey()) + " (id: " + entry.getKey() + ") =" + entry.getValue()
+                ).collect(Collectors.toList());
+                throw new RuntimeException("Error reading sync packet for " + entityId + " has read " + readVars + " reading " + j[0] + " out of " + size
+                        + ". Var snapshot is " + v + ". Reading variable name is " + SynchronizedEntityVariableRegistry.getSyncVarRegistry().inverse().get(id), e);
             }
         }
         //System.out.println("Rcv "+simulationTimeClient);
