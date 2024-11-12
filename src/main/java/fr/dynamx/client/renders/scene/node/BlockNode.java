@@ -110,16 +110,19 @@ public class BlockNode<A extends BlockObject<?>> extends AbstractItemNode<BaseRe
         TEDynamXBlock te = context.getTileEntity();
         if (te == null)
             return;
+        transform.identity();
         Vector3fPool.openPool();
         QuaternionPool.openPool();
         GlQuaternionPool.openPool();
         GlStateManager.pushMatrix();
         applyTransform(te, context.getRenderPosition());
+        GlStateManager.multMatrix(ClientDynamXUtils.getMatrixBuffer(transform));
         if (DynamXDebugOptions.PLAYER_TO_OBJECT_COLLISION_DEBUG.isActive()) {
             QuaternionPool.openPool();
             GlQuaternionPool.openPool();
             GlStateManager.pushMatrix();
-            GlStateManager.translate(-0.5D, -1.5D, -0.5D);
+            // Special translation for the PartShapes because their position already "contains" the block's translation, so we need to remove it
+            GlStateManager.translate(-0.5f - packInfo.getTranslation().x, -1.5f - packInfo.getTranslation().y, -0.5f - packInfo.getTranslation().z);
             for (IShapeInfo partShape : te.getUnrotatedCollisionBoxes()) {
                 RenderGlobal.drawBoundingBox(
                         (partShape.getPosition().x - partShape.getSize().x),
@@ -138,15 +141,12 @@ public class BlockNode<A extends BlockObject<?>> extends AbstractItemNode<BaseRe
         if (DynamXDebugOptions.SEATS_AND_STORAGE.isActive()) {
             QuaternionPool.openPool();
             GlQuaternionPool.openPool();
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0D, -1.5D, 0D);
             for (PartStorage storage : (List<PartStorage>) packInfo.getPartsByType(PartStorage.class)) {
                 storage.getBox(box);
                 box.offset(storage.getPosition());
                 RenderGlobal.drawBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ,
                         1, 0.7f, 0, 1);
             }
-            GlStateManager.popMatrix();
             GlQuaternionPool.closePool();
             QuaternionPool.closePool();
         }
