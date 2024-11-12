@@ -2,7 +2,6 @@ package fr.dynamx.server.command;
 
 import fr.dynamx.api.network.EnumPacketTarget;
 import fr.dynamx.common.DynamXContext;
-import fr.dynamx.common.contentpack.ContentPackLoader;
 import fr.dynamx.common.network.packets.MessageSyncConfig;
 import fr.dynamx.common.network.sync.variables.EntityPosVariable;
 import fr.dynamx.server.network.PlayerSyncBuffer;
@@ -16,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.List;
 
@@ -58,12 +56,11 @@ public class CmdNetworkConfig implements ISubCommand {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length - 1 >= 0) System.arraycopy(args, 1, args, 0, args.length - 1);
-        if(args[0].equals("resyncId") && sender instanceof EntityPlayer) {
+        if (args[0].equals("resyncId") && sender instanceof EntityPlayer) {
             System.out.println("Resyncing id for " + sender);
-            DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, DynamXConfig.mountedVehiclesSyncTickRate, ContentPackLoader.getBlocksGrip(), ContentPackLoader.slopes, ContentPackLoader.SLOPES_LENGTH, ContentPackLoader.PLACE_SLOPES, DynamXContext.getPhysicsSimulationMode(Side.CLIENT), ((EntityPlayer) sender).getEntityId()), EnumPacketTarget.PLAYER, (EntityPlayerMP) sender);
+            DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, ((EntityPlayer) sender).getEntityId()), EnumPacketTarget.PLAYER, (EntityPlayerMP) sender);
             sender.sendMessage(new TextComponentString("Resynced id for " + sender));
-        }
-        else if (args[0].equalsIgnoreCase("doTrackSync")) {
+        } else if (args[0].equalsIgnoreCase("doTrackSync")) {
             TRACK_SYNC = !TRACK_SYNC;
             sender.sendMessage(new TextComponentString("TRACK_SYNC is " + TRACK_SYNC));
         } else if (args[0].equalsIgnoreCase("syncCrit")) {
@@ -89,7 +86,7 @@ public class CmdNetworkConfig implements ISubCommand {
         } else if (args[0].equalsIgnoreCase("syncDelay")) {
             DynamXConfig.mountedVehiclesSyncTickRate = parseInt(args[1]);
             if (server.isDedicatedServer()) {
-                DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, DynamXConfig.mountedVehiclesSyncTickRate, ContentPackLoader.getBlocksGrip(), ContentPackLoader.slopes, ContentPackLoader.SLOPES_LENGTH, ContentPackLoader.PLACE_SLOPES, DynamXContext.getPhysicsSimulationMode(Side.CLIENT), -1), EnumPacketTarget.ALL);
+                DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, -1), EnumPacketTarget.ALL);
             }
             server.getPlayerList().sendMessage(new TextComponentString("Changed sync delay to " + DynamXConfig.mountedVehiclesSyncTickRate));
         } else if (args[0].equalsIgnoreCase("SMOOTHY")) {

@@ -14,7 +14,6 @@ import fr.dynamx.common.DynamXContext;
 import fr.dynamx.common.DynamXMain;
 import fr.dynamx.common.blocks.DynamXBlock;
 import fr.dynamx.common.capability.DynamXChunkDataProvider;
-import fr.dynamx.common.contentpack.ContentPackLoader;
 import fr.dynamx.common.contentpack.DynamXObjectLoaders;
 import fr.dynamx.common.contentpack.type.objects.BlockObject;
 import fr.dynamx.common.entities.PhysicsEntity;
@@ -26,7 +25,6 @@ import fr.dynamx.common.network.packets.MessageSyncConfig;
 import fr.dynamx.common.network.sync.MessageSeatsSync;
 import fr.dynamx.common.physics.player.PlayerPhysicsHandler;
 import fr.dynamx.server.network.ServerPhysicsSyncManager;
-import fr.dynamx.utils.DynamXConfig;
 import fr.dynamx.utils.DynamXConstants;
 import fr.dynamx.utils.client.ContentPackUtils;
 import fr.dynamx.utils.optimization.QuaternionPool;
@@ -54,7 +52,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.HashMap;
@@ -83,7 +80,7 @@ public class CommonEventHandler {
     @SubscribeEvent
     public void onLoggedIn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
         if (FMLCommonHandler.instance().getSide().isServer()) {
-            DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, DynamXConfig.mountedVehiclesSyncTickRate, ContentPackLoader.getBlocksGrip(), ContentPackLoader.slopes, ContentPackLoader.SLOPES_LENGTH, ContentPackLoader.PLACE_SLOPES, DynamXContext.getPhysicsSimulationMode(Side.CLIENT), event.player.getEntityId()), EnumPacketTarget.PLAYER, (EntityPlayerMP) event.player);
+            DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, event.player.getEntityId()), EnumPacketTarget.PLAYER, (EntityPlayerMP) event.player);
         }
     }
 
