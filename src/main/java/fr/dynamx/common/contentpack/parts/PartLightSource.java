@@ -210,16 +210,20 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
 
         // Add all variants from the model, so when the lights are off, they use the correct texture
         if (owner instanceof IModelTextureVariantsSupplier) {
-            ((IModelTextureVariantsSupplier) owner).getMainObjectVariants().getTextureVariants().forEach((id, variant) -> {
-                if (nameToVariant.containsKey(variant.getName())) {
-                    return;
-                }
-                nameToVariant.put(variant.getName(), variant);
-                variantsMap.put(variant.getId(), variant);
-                if(variant.getId() >= nextTextureId.get()) {
-                    nextTextureId.set((byte) (variant.getId() + 1));
-                }
-            });
+            //TODO SEPARATE FUNCTION
+            IModelTextureVariantsSupplier.IModelTextureVariants variants = ((IModelTextureVariantsSupplier) owner).getMainObjectVariants();
+            if (variants != null) {
+                variants.getTextureVariants().forEach((id, variant) -> {
+                    if (nameToVariant.containsKey(variant.getName())) {
+                        return;
+                    }
+                    nameToVariant.put(variant.getName(), variant);
+                    variantsMap.put(variant.getId(), variant);
+                    if (variant.getId() >= nextTextureId.get()) {
+                        nextTextureId.set((byte) (variant.getId() + 1));
+                    }
+                });
+            }
         }
 
         List<LightObject> sources = getSources();
