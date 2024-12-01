@@ -50,13 +50,6 @@ public abstract class RenderPhysicsEntity<T extends PhysicsEntity<?>> extends Re
     }
 
     @Override
-    public boolean shouldRender(T livingEntity, ICamera camera, double camX, double camY, double camZ) {
-        boolean b = super.shouldRender(livingEntity, camera, camX, camY, camZ);
-        System.out.println("Should render " + livingEntity + " " + b + " " + camera + " " + camX + " " + camY + " " + camZ +" "+ MinecraftForgeClient.getRenderPass());
-        return b;
-    }
-
-    @Override
     public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
         entity.wasRendered = true;
         if (!canRender(entity))

@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(value = EntityRenderer.class, remap = DynamXConstants.REMAP)
 public abstract class MixinEntityRenderer {
-
     @Inject(method = "renderWorldPass(IFJ)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderGlobal;renderEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;F)V"))
     private void preRenderEntities(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
@@ -34,16 +33,5 @@ public abstract class MixinEntityRenderer {
             GL11.glStencilMask(0x00);
         }
         ClientEventHandler.resetBigEntities();
-    }
-
-    @Inject(method = "renderWorldPass(IFJ)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderGlobal;renderEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;F)V",
-                    shift = At.Shift.AFTER))
-    private void postRenderEntities(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
-        int pass2 = MinecraftForgeClient.getRenderPass();
-        System.out.println("Yolo is ending "+  pass + " " + pass2);
-        if(pass2 == 0) {
-            ClientEventHandler.renderBigEntities(partialTicks);
-        }
     }
 }

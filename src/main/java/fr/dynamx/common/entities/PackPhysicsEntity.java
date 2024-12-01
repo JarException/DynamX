@@ -30,9 +30,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,20 +146,6 @@ public abstract class PackPhysicsEntity<T extends PackEntityPhysicsHandler<A, ?>
             entityTextureId = (byte) getMetadata();
             getModules().forEach(m -> m.onTexturesChange(entityTextureId));
         }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean isInRangeToRenderDist(double range) {
-        boolean b = (getPackInfo() == null || getPackInfo().getRenderDistance() == -1) ? super.isInRangeToRenderDist(range) : getPackInfo().getRenderDistance() >= range;
-        System.out.println("isInRangeToRenderDist " + b + "  " + range + " " + MinecraftForgeClient.getRenderPass());
-        return b;
-    }
-
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        System.out.println("shouldRenderInPass " + pass + "  " + MinecraftForgeClient.getRenderPass());
-        return super.shouldRenderInPass(pass);
     }
 
     @Override
