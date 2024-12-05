@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.*;
 
-public abstract class AbstractItemObject<T extends AbstractItemObject<?, ?>, A extends ISubInfoTypeOwner<?>> extends ObjectInfo<T>
+public abstract class AbstractItemObject<T extends AbstractItemObject<?, ?>, A extends ISubInfoTypeOwner<A>> extends ObjectInfo<T>
         implements IModelPackObject, IPartContainer<A>
 {
     @Getter

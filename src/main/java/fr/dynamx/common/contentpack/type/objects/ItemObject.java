@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class ItemObject<T extends ItemObject<?>> extends AbstractItemObject<T, T> {
+public class ItemObject<T extends ItemObject<T>> extends AbstractItemObject<T, T> {
     @Getter
     @Setter
     @PackFileProperty(configNames = "MaxItemStackSize", required = false, defaultValue = "1")
