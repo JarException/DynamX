@@ -9,14 +9,12 @@ import fr.dynamx.api.contentpack.object.render.IModelPackObject;
 import fr.dynamx.api.contentpack.object.render.IResourcesOwner;
 import fr.dynamx.api.contentpack.object.subinfo.ISubInfoTypeOwner;
 import fr.dynamx.api.events.DynamXBlockEvent;
-import fr.dynamx.common.DynamXMain;
 import fr.dynamx.common.capability.DynamXChunkData;
 import fr.dynamx.common.capability.DynamXChunkDataProvider;
 import fr.dynamx.common.contentpack.DynamXObjectLoaders;
-import fr.dynamx.common.contentpack.parts.PartBlockSeat;
-import fr.dynamx.common.contentpack.parts.PartStorage;
 import fr.dynamx.common.contentpack.type.objects.BlockObject;
 import fr.dynamx.common.contentpack.type.objects.PropObject;
+import fr.dynamx.common.entities.IDynamXObject;
 import fr.dynamx.common.items.DynamXItemRegistry;
 import fr.dynamx.utils.DynamXConstants;
 import fr.dynamx.utils.RegistryNameSetter;
@@ -190,20 +188,13 @@ public class DynamXBlock<T extends BlockObject<?>> extends Block implements IDyn
         if (!worldIn.isRemote) {
             TileEntity te = worldIn.getTileEntity(pos);
             if (te instanceof TEDynamXBlock) {
+                //TODO ADD INTERACT EVENTS
                 //If we clicked a part, try to interact with it.
-                InteractivePart hitPart = ((TEDynamXBlock) te).getHitPart(playerIn);
-                if (hitPart instanceof PartStorage) {
-                    playerIn.openGui(DynamXMain.instance, hitPart.getId() + 2, worldIn, pos.getX(), pos.getY(), pos.getZ());
-                    return true;
+                InteractivePart<IDynamXObject, ?> hitPart = (InteractivePart<IDynamXObject, ?>) ((TEDynamXBlock) te).getHitPart(playerIn);
+                if(!hitPart.canInteract((IDynamXObject) te, playerIn)) {
+                    return false;
                 }
-                if (hitPart instanceof PartBlockSeat && hitPart.canInteract(((TEDynamXBlock) te).getSeatEntities().get(0), playerIn)) {
-                    // TODO if (!MinecraftForge.EVENT_BUS.post(new VehicleEntityEvent.PlayerInteract(context, (BaseVehicleEntity<?>) vehicleEntity, hitPart)))
-                    byte idx = hitPart.getId();
-                    if (idx >= ((TEDynamXBlock) te).getSeatEntities().size())
-                        idx = 0;
-                    hitPart.interact(((TEDynamXBlock) te).getSeatEntities().get(idx), playerIn);
-                    return true;
-                }
+                return hitPart.interact((IDynamXObject) te, playerIn);
             }
         }
         return false;
