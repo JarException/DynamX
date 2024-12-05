@@ -116,7 +116,7 @@ public class ObjModelRenderer extends DxModelRenderer {
                     drawn = true;
                 }
             }
-            MinecraftForge.EVENT_BUS.post(new DynamXModelRenderEvent.RenderMainParts(EventPhase.POST, this, textureVariants, textureDataId));
+            MinecraftForge.EVENT_BUS.post(new DynamXModelRenderEvent.RenderMainParts(EventPhase.POST, this, getTextureVariants(), textureDataId));
             return drawn;
         }
         return true;

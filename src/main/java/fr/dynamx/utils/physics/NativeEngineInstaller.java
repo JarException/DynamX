@@ -60,12 +60,16 @@ public class NativeEngineInstaller {
         String absoluteFilename = file.getAbsolutePath();
         boolean success = false;
         if (!file.exists()) {
-            DynamXMain.log.warn("Cannot load native physics engine : " + absoluteFilename + " not found !");
+            DynamXMain.log.warn("Cannot load native physics engine: " + absoluteFilename + " not found !");
         } else if (!file.canRead()) {
-            DynamXMain.log.fatal("Cannot load native physics engine : " + absoluteFilename + " not readable !");
+            DynamXMain.log.fatal("Cannot load native physics engine: " + absoluteFilename + " not readable !");
         } else {
-            System.load(absoluteFilename);
-            success = true;
+            try {
+                System.load(absoluteFilename);
+                success = true;
+            } catch (UnsatisfiedLinkError e) {
+                DynamXMain.log.warn("Cannot load native physics engine: cannot link {}: {}", absoluteFilename, e);
+            }
         }
         if (!success) {
             ProgressManager.ProgressBar bar = ProgressManager.push("Download native physics engine...", 101);

@@ -76,7 +76,7 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
      */
     protected AxisAlignedBB boundingBoxCache;
 
-    private boolean modulesInitialized;
+    private EnumBlockEntityInitState initialized = EnumBlockEntityInitState.NOT_INITIALIZED;
     protected final List<IBlockEntityModule> moduleList = new ArrayList<>();
     protected final List<IBlockEntityModule.IBlockEntityUpdateListener> updateEntityListeners = new ArrayList<>();
 
@@ -115,6 +115,7 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
             if (m instanceof IBlockEntityModule.IBlockEntityUpdateListener && ((IBlockEntityModule.IBlockEntityUpdateListener) m).listenBlockEntityUpdates(world.isRemote ? Side.CLIENT : Side.SERVER))
                 updateEntityListeners.add((IBlockEntityModule.IBlockEntityUpdateListener) m);
         });
+        initialized = EnumBlockEntityInitState.ALL;
     }
 
     public <Y extends IPhysicsModule<?>> Y getModuleByType(Class<Y> moduleClass) {
@@ -132,8 +133,11 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
         //TODO fireCreateModulesEvent(world.isRemote ? Side.CLIENT : Side.SERVER);
         moduleList.sort(Comparator.comparingInt(m -> -m.getInitPriority()));
         moduleList.forEach(IBlockEntityModule::initBlockEntityProperties);
-        getListenerModules();
-        modulesInitialized = true;
+        if (world != null) {
+            getListenerModules();
+        } else {
+            initialized = EnumBlockEntityInitState.MODULES_CREATED;
+        }
     }
 
     protected void createModules(ModuleListBuilder modules) {
@@ -434,8 +438,12 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
                 seatEntities.add(entity);
             }
         }
-        if (!modulesInitialized) {
-            initBlockEntityModules();
+        if (initialized != EnumBlockEntityInitState.ALL) {
+            if (initialized == EnumBlockEntityInitState.MODULES_CREATED) {
+                getListenerModules();
+            } else {
+                initBlockEntityModules();
+            }
         }
         if (!updateEntityListeners.isEmpty()) {
             updateEntityListeners.forEach(IBlockEntityModule.IBlockEntityUpdateListener::updateBlockEntity);
@@ -480,5 +488,9 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
 
     public List<IBlockEntityModule> getModules() {
         return moduleList;
+    }
+
+    public enum EnumBlockEntityInitState {
+        NOT_INITIALIZED, MODULES_CREATED, ALL
     }
 }
