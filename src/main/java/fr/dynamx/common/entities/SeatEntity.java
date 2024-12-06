@@ -49,18 +49,20 @@ public class SeatEntity extends Entity {
     @Override
     public void applyOrientationToEntity(Entity passenger) {
         if (mySeat != null && mySeat.shouldLimitFieldOfView()) {
+            float blockYaw = block.getPackInfo() == null ? 0 : (block.getPackInfo().getRotation().y - block.getRelativeRotation().y + block.getRotation() * 22.5f);
+
             float f = MathHelper.wrapDegrees(passenger.rotationYaw);
-            float f1 = MathHelper.clamp(f, mySeat.getMaxYaw(), mySeat.getMinYaw());
+            float f1 = MathHelper.clamp(f, MathHelper.wrapDegrees(mySeat.getMinYaw() + blockYaw), MathHelper.wrapDegrees(mySeat.getMaxYaw() + blockYaw));
             passenger.rotationYaw = f1;
             f = MathHelper.wrapDegrees(passenger.prevRotationYaw);
-            f1 = MathHelper.clamp(f, mySeat.getMaxYaw(), mySeat.getMinYaw());
+            f1 = MathHelper.clamp(f, MathHelper.wrapDegrees(mySeat.getMinYaw() + blockYaw), MathHelper.wrapDegrees(mySeat.getMaxYaw() + blockYaw));
             passenger.prevRotationYaw = f1;
 
             float f2 = MathHelper.wrapDegrees(passenger.rotationPitch);
-            float f3 = MathHelper.clamp(f2, mySeat.getMaxPitch(), mySeat.getMinPitch());
+            float f3 = MathHelper.clamp(f2, mySeat.getMinPitch(), mySeat.getMaxPitch());
             passenger.rotationPitch = f3;
             f2 = MathHelper.wrapDegrees(passenger.prevRotationPitch);
-            f3 = MathHelper.clamp(f2, mySeat.getMaxPitch(), mySeat.getMinPitch());
+            f3 = MathHelper.clamp(f2, mySeat.getMinPitch(), mySeat.getMaxPitch());
             passenger.prevRotationPitch = f3;
         }
     }
