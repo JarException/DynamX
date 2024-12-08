@@ -120,7 +120,7 @@ public class GuiLoadingErrors extends GuiFrame {
             }));
             label.setText(text.toString());
             label.setCssId("label-deployed");
-            height = mc.fontRenderer.FONT_HEIGHT * GuiAPIClientHelper.trimTextToWidth(text.toString(), (int) getWidth()).size() + 10;
+            height = mc.fontRenderer.FONT_HEIGHT * GuiAPIClientHelper.trimTextToWidth(text.toString(), (int) getWidth(), -1).size() + 10;
         } else {
             long fatals = errorListPerObject.stream().filter(er -> er.getLevel() == ErrorLevel.FATAL).count();
             if (fatals > 0)
