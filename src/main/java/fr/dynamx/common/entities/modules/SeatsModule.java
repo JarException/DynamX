@@ -153,7 +153,7 @@ public class SeatsModule implements IPhysicsModule<AbstractEntityPhysicsHandler<
         BasePartSeat hitPart = seatToPassenger.inverse().get(passenger);
         if (hitPart != null) {
             if (hitPart.isDriver() && passenger instanceof EntityPlayer) {
-                entity.getSynchronizer().onPlayerStartControlling((EntityPlayer) passenger, true);
+                DynamXContext.getPhysicsWorld(entity.world).schedule(() -> entity.getSynchronizer().onPlayerStartControlling((EntityPlayer) passenger, true));
             }
             MinecraftForge.EVENT_BUS.post(new VehicleEntityEvent.EntityMount(Side.SERVER, passenger, entity, this, hitPart));
             DynamXContext.getNetwork().sendToClient(new MessageSeatsSync((IModuleContainer.ISeatsContainer) entity), EnumPacketTarget.ALL_TRACKING_ENTITY, entity);
