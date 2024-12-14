@@ -35,17 +35,17 @@ public abstract class BasePartSeat<A extends IDynamXObject, T extends ISubInfoTy
     @PackFileProperty(configNames = "ShouldLimitFieldOfView", required = false, defaultValue = "true")
     protected boolean shouldLimitFieldOfView = true;
 
-    @PackFileProperty(configNames = "MaxYaw", required = false, defaultValue = "-105")
-    protected float maxYaw = -105.0f;
+    @PackFileProperty(configNames = "MaxYaw", required = false, defaultValue = "105")
+    protected float maxYaw = 105.0f;
 
-    @PackFileProperty(configNames = "MinYaw", required = false, defaultValue = "105")
-    protected float minYaw = 105.0f;
+    @PackFileProperty(configNames = "MinYaw", required = false, defaultValue = "-105")
+    protected float minYaw = -105.0f;
 
-    @PackFileProperty(configNames = "MaxPitch", required = false, defaultValue = "-105")
-    protected float maxPitch = -105.0f;
+    @PackFileProperty(configNames = "MaxPitch", required = false, defaultValue = "105")
+    protected float maxPitch = 105.0f;
 
-    @PackFileProperty(configNames = "MinPitch", required = false, defaultValue = "105")
-    protected float minPitch = 105.0f;
+    @PackFileProperty(configNames = "MinPitch", required = false, defaultValue = "-105")
+    protected float minPitch = -105.0f;
 
     @PackFileProperty(configNames = "Rotation", required = false, defaultValue = "1 0 0 0")
     protected Quaternion rotation;
