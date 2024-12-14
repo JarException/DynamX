@@ -126,7 +126,7 @@ public class SeatsModule implements IPhysicsModule<AbstractEntityPhysicsHandler<
      */
     public void applyOrientationToEntity(Entity passenger) {
         passenger.setRenderYawOffset(0);
-        BasePartSeat seat = getRidingSeat(passenger);
+        BasePartSeat<?, ?> seat = getRidingSeat(passenger);
         if (seat != null && seat.shouldLimitFieldOfView()) {
             // Limit yaw
             float f = MathHelper.wrapDegrees(passenger.rotationYaw - entity.rotationYaw);
