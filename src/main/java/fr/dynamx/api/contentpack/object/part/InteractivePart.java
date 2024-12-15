@@ -4,21 +4,16 @@ import com.jme3.math.Vector3f;
 import fr.dynamx.api.contentpack.object.subinfo.ISubInfoTypeOwner;
 import fr.dynamx.common.entities.IDynamXObject;
 import fr.dynamx.utils.optimization.MutableBoundingBox;
-import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 
-/**
- * A {@link BasePart} that can be interacted with
- */
-@Setter
-@Getter
 public abstract class InteractivePart<A extends IDynamXObject, T extends ISubInfoTypeOwner<T>> extends BasePart<T> {
     /**
      * The box used for interaction and raytracing
      */
+    @Setter
     private AxisAlignedBB box;
 
     public InteractivePart(T owner, String partName) {
