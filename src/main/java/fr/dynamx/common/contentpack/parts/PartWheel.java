@@ -32,6 +32,7 @@ import fr.dynamx.utils.errors.DynamXErrorManager;
 import fr.dynamx.utils.maths.DynamXGeometry;
 import fr.dynamx.utils.maths.DynamXMath;
 import fr.dynamx.utils.optimization.GlQuaternionPool;
+import fr.dynamx.utils.optimization.MutableBoundingBox;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -229,6 +230,7 @@ public class PartWheel extends InteractivePart<BaseVehicleEntity<?>, ModularVehi
      * Otherwise, the wheel will be rendered in this node.
      */
     class PartBaseWheelNode<A extends ModularVehicleInfo> extends SimpleNode<BaseRenderContext.EntityRenderContext, A> {
+        private final MutableBoundingBox debugBox = new MutableBoundingBox();
         private final boolean isMudGuard;
 
         public PartBaseWheelNode(PartWheel wheel, Vector3f scale, List<SceneNode<BaseRenderContext.EntityRenderContext, A>> linkedChilds, boolean isMudGuard) {
@@ -283,8 +285,8 @@ public class PartWheel extends InteractivePart<BaseVehicleEntity<?>, ModularVehi
             if (!isMudGuard && DynamXDebugOptions.WHEELS.isActive()) {
                 GlStateManager.pushMatrix();
                 DynamXRenderUtils.glTranslate(getPosition());
-                AxisAlignedBB box = getBox();
-                RenderGlobal.drawBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ,
+                getBox(debugBox);
+                RenderGlobal.drawBoundingBox(debugBox.minX, debugBox.minY, debugBox.minZ, debugBox.maxX, debugBox.maxY, debugBox.maxZ,
                         isDrivingWheel() ? 0 : 1, isDrivingWheel() ? 1 : 0, 0, 1);
                 GlStateManager.popMatrix();
             }
@@ -296,6 +298,8 @@ public class PartWheel extends InteractivePart<BaseVehicleEntity<?>, ModularVehi
      * Wheel rendered as a child of {@link PartBaseWheelNode} (when there is a mudguard)
      */
     class PartAttachedWheelNode<A extends ModularVehicleInfo> extends SimpleNode<BaseRenderContext.EntityRenderContext, A> {
+        private final MutableBoundingBox debugBox = new MutableBoundingBox();
+
         public PartAttachedWheelNode(PartWheel wheel, Vector3f scale, List<SceneNode<BaseRenderContext.EntityRenderContext, A>> linkedChilds) {
             super(PartWheel.this.isAutomaticPosition ? wheel.getPosition() : new Vector3f(wheel.getPosition().subtract(wheel.getRotationPoint())), null, PartWheel.this.isAutomaticPosition, scale, linkedChilds);
             if (wheel.getSuspensionAxis() != null && !isAutomaticPosition) //Note that we have the mudguard translation and rotation applied, so the translation must "anticipate" this rotation.
@@ -329,8 +333,8 @@ public class PartWheel extends InteractivePart<BaseVehicleEntity<?>, ModularVehi
             if (DynamXDebugOptions.WHEELS.isActive()) {
                 GlStateManager.pushMatrix();
                 DynamXRenderUtils.glTranslate(getPosition());
-                AxisAlignedBB box = getBox();
-                RenderGlobal.drawBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ,
+                getBox(debugBox);
+                RenderGlobal.drawBoundingBox(debugBox.minX, debugBox.minY, debugBox.minZ, debugBox.maxX, debugBox.maxY, debugBox.maxZ,
                         isDrivingWheel() ? 0 : 1, isDrivingWheel() ? 1 : 0, 0, 1);
                 GlStateManager.popMatrix();
             }
