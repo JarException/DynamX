@@ -28,10 +28,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Provides helper methods for rotated collisions and handles collisions with entities <br>
@@ -352,11 +350,26 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
         return motionChanged;
     }
 
-    private boolean shouldHandleCollision(Entity entity, MoverType moverType) {
-        /*if(entity instanceof EntityPlayer) {
-            return moverType.equals(MoverType.PLAYER);
-        }*/
-        return (!(entity instanceof PhysicsEntity));
+    private volatile Set<Pattern> compiledIgnorePatterns;
+    private boolean shouldHandleCollision(Entity entity) {
+        if (compiledIgnorePatterns == null) {
+            compiledIgnorePatterns = new HashSet<>();
+            for (String pattern : DynamXConfig.ignoreCollisionEntities) {
+                String regex = pattern
+                        .replace(".", "\\.")
+                        .replace("*", ".*");
+                compiledIgnorePatterns.add(Pattern.compile("^" + regex + "$"));
+            }
+        }
+
+        String className = entity.getClass().getName();
+        for (Pattern pattern : compiledIgnorePatterns) {
+            if (pattern.matcher(className).matches()) {
+                return false;
+            }
+        }
+
+        return !(entity instanceof PhysicsEntity);
     }
 
     @Override
@@ -395,7 +408,7 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
 
         motionChanged = false;
 
-        if (shouldHandleCollision(entity, moverType)) {
+        if (shouldHandleCollision(entity)) {
             PooledHashMap<Vector3f, IDynamXObject> collidableEntities = getCollidableTileEntities(entity.world, new MutableBoundingBox(entity.getEntityBoundingBox()).grow(1));
             for (Map.Entry<Vector3f, IDynamXObject> e : collidableEntities.entrySet()) {
                 //System.out.println("Input "+mx+" "+my+" "+mz+" "+nx+" "+ny+" "+nz+" "+entity.onGround+" "+entity.collidedVertically+" "+e.physicsPosition);
