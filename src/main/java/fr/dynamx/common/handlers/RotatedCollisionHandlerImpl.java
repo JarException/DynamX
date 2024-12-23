@@ -352,6 +352,9 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
 
     private volatile Set<Pattern> compiledIgnorePatterns;
     private boolean shouldHandleCollision(Entity entity) {
+        if(entity instanceof PhysicsEntity) {
+            return false;
+        }
         if (compiledIgnorePatterns == null) {
             compiledIgnorePatterns = new HashSet<>();
             for (String pattern : DynamXConfig.ignoreCollisionEntities) {
@@ -368,8 +371,7 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
                 return false;
             }
         }
-
-        return !(entity instanceof PhysicsEntity);
+        return true;
     }
 
     @Override
