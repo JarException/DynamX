@@ -29,10 +29,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-@Mod(modid = MCglTF.MODID, clientSideOnly = true, useMetadata = true)
+@Mod(modid = MCglTF.MODID, clientSideOnly = true, useMetadata = true, version = MCglTF.VERSION, name = MCglTF.MODID)
 public class MCglTF {
 
     public static final String MODID = "mcgltf-dynamx";
+    public static final String VERSION = "1.0.0";
     public static final String RESOURCE_LOCATION = "resourceLocation";
 
     public static final Logger logger = LogManager.getLogger(MODID);
