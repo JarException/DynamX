@@ -6,8 +6,7 @@ import lombok.Getter;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DynamXConfig
 {
@@ -38,6 +37,7 @@ public class DynamXConfig
     public static int ragdollSpawnMinForce;
 
     public static boolean disableSSLCertification;
+    public static Set<String> ignoreCollisionEntities;
 
     @Getter
     private static float masterSoundVolume = 0.8f;
@@ -62,7 +62,12 @@ public class DynamXConfig
         //todo update doc and see new impact on perfs
         blockCollisionRadius = cfg.getInt("BlockCollisionRadius2", "Physics", 3, 0, 16, "The radius of collision checking with DynamX blocks around players. Has an impact on game performance. NOTE : Renamed with a '2' to replace the old default value and stay below 30 for stable performance");
         maxComplexBlockBoxes = cfg.getInt("MaxComplexBoxes", "Physics", 8, 0, 100, "The amount of detailed collisions per each complex block. If the block has more collisions (e.g. Decocraft), it will be a cube containing all collisions. Has an impact on game performance.");
-
+        ignoreCollisionEntities = new HashSet<>(Arrays.asList(cfg.getStringList(
+                "IgnoreCollisionEntities",
+                "Physics",
+                new String[]{"example.entity.*"},
+                "A list of entity classes that should ignore collisions. Useful for optimization or special behaviors. Wildcard supported (*)"
+        )));
         if (cfg.hasKey("Statistics", "CollectData")) {
             if (!cfg.getBoolean("CollectData", "Statistics", true, "Enables automatic reporting of your computer info (GPU, memory, OS) and useful crash-reports"))
                 ACsLib.getPlatform().provideService(StatsReportingService.class).disable();
