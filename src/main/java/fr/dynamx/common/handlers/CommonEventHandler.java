@@ -108,7 +108,7 @@ public class CommonEventHandler {
             } else if (event.getTarget().ticksExisted <= 20) //If we were riding a vehicle, when we span we need to receive our seat : we do that here
             {
                 if (event.getTarget() instanceof IModuleContainer.ISeatsContainer && ((IModuleContainer.ISeatsContainer) event.getTarget()).hasSeats()) {
-                    schedule(new TaskScheduler.ScheduledTask((short) 10) {
+                    schedule(new TaskScheduler.ScheduledTask((short) 20) {
                         @Override
                         public void run() {
                             DynamXContext.getNetwork().sendToClient(new MessageSeatsSync((IModuleContainer.ISeatsContainer) event.getTarget()), EnumPacketTarget.PLAYER, (EntityPlayerMP) event.getEntityPlayer());

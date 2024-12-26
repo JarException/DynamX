@@ -105,8 +105,6 @@ public class SPPhysicsEntitySynchronizer<T extends PhysicsEntity<?>> extends Phy
         }
         setSimulationHolder(getDefaultSimulationHolder(), null);
         if (player.world.isRemote && player.isUser()) {
-            System.out.println("Stop controlling call stack on " + this + " " + this.hashCode());
-            new NullPointerException("nulle fin").printStackTrace();
             controllers.clear();
         }
     }
@@ -160,8 +158,6 @@ public class SPPhysicsEntitySynchronizer<T extends PhysicsEntity<?>> extends Phy
 
     @Override
     public List<IVehicleController> getControllers() {
-        System.out.println("Controllers GOT on " + this +" "+this.hashCode());
-        new NullPointerException("Got stack").printStackTrace();
         return controllers;
     }
 }

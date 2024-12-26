@@ -184,8 +184,6 @@ public class BoatPropellerModule extends BasicEngineModule implements IPackInfoR
 
         public void updateMovement() {
             physicsAccelerationForce = 0;
-            // do braking first so it doesn't override engineBraking.
-            brake(0);
             if (isAccelerating()) {
                 if (boatPhysicsHandler.getSpeedOnZAxisInBoatSpace() < -1f) //reversing
                 {
@@ -211,6 +209,9 @@ public class BoatPropellerModule extends BasicEngineModule implements IPackInfoR
 
         public void accelerate(float strength) {
             this.physicsAccelerationForce = strength;
+            if(strength == 0) {
+                return;
+            }
             if (hasEngine()) {
                 float power = getEngine().getPowerOutputAtRevs() / 1000;
                 strength = power * strength;

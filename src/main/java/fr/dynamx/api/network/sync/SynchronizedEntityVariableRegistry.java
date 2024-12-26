@@ -100,7 +100,7 @@ public class SynchronizedEntityVariableRegistry {
         }
         if (serializer == null) {
             DynamXMain.log.error("Cannot find serializer for entity variable {}. Tried: {}. Generic type is {}. Generic superclass is {}", variableName, type.getActualTypeArguments()[0], f.getGenericType(), f.getType().getGenericSuperclass());
-            throw new IllegalArgumentException("Bad entity variable " + f + " " + type.getActualTypeArguments()[0] + " name : " + variableName);
+            throw new IllegalArgumentException("Don't know how to serialize entity variable " + f + " " + type.getActualTypeArguments()[0] + " name : " + variableName);
         }
         return serializer;
     }
