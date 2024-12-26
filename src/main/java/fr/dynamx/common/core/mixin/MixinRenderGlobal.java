@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.client.MinecraftForgeClient;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -55,6 +54,7 @@ public abstract class MixinRenderGlobal {
         int renderPass = MinecraftForgeClient.getRenderPass();
         if (renderPass == 0) {
             ClientEventHandler.renderBigEntities(partialTicks);
+            ClientEventHandler.isRenderingEntitiesWithOptifineShaders = true;
         }
     }
 }

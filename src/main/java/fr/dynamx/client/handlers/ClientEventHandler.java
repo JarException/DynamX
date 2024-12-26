@@ -72,6 +72,12 @@ public class ClientEventHandler {
     public static final Minecraft MC = Minecraft.getMinecraft();
     public static UUID renderingEntity;
     public static RenderPlayer renderPlayer;
+    /**
+     * There are two choices: <br/>
+     * - When Optifine is enabled with shaders, the {@link fr.dynamx.common.core.mixin.MixinRenderGlobal} renders the big entities behind the player's chunk <br>
+     * - When there is no Optifine/shaders are disabled, the big entities are rendered in the RenderWorldLast event, here
+     */
+    public static boolean isRenderingEntitiesWithOptifineShaders;
 
     /* Placing block */
     private DxModelRenderer model;
@@ -96,13 +102,15 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.EntityInteract event) {
         EntityPlayer player = event.getEntityPlayer();
-        if (player.world.isRemote) {
-            if (event.getTarget() instanceof PhysicsEntity && event.getHand().equals(EnumHand.MAIN_HAND) && !(event.getEntityPlayer().getHeldItem(event.getHand()).getItem() instanceof DynamXItemSpawner)) {
-                DynamXContext.getNetwork().sendToServer(new MessageEntityInteract(event.getTarget().getEntityId()));
-                event.setCanceled(true);
-                event.setCancellationResult(EnumActionResult.SUCCESS);
-            }
+        if (!player.world.isRemote) {
+            return;
         }
+        if (!(event.getTarget() instanceof PhysicsEntity) || !event.getHand().equals(EnumHand.MAIN_HAND) || event.getEntityPlayer().getHeldItem(event.getHand()).getItem() instanceof DynamXItemSpawner) {
+            return;
+        }
+        DynamXContext.getNetwork().sendToServer(new MessageEntityInteract(event.getTarget().getEntityId()));
+        event.setCanceled(true);
+        event.setCancellationResult(EnumActionResult.SUCCESS);
     }
 
     @SubscribeEvent
@@ -114,20 +122,18 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onMount(VehicleEntityEvent.EntityMount event) {
-        if (event.getEntityMounted() instanceof EntityPlayer) {
-            if (((EntityPlayer) event.getEntityMounted()).isUser()) {
-                ACsGuiApi.asyncLoadThenShowHudGui("Vehicle HUD", () -> new VehicleHud((IModuleContainer.ISeatsContainer) event.getEntity()));
-            }
+        if (!(event.getEntityMounted() instanceof EntityPlayer) || !((EntityPlayer) event.getEntityMounted()).isUser()) {
+            return;
         }
+        ACsGuiApi.asyncLoadThenShowHudGui("Vehicle HUD", () -> new VehicleHud((IModuleContainer.ISeatsContainer) event.getEntity()));
     }
 
     @SubscribeEvent
     public void onDismount(VehicleEntityEvent.EntityDismount event) {
-        if (event.getEntityDismounted() instanceof EntityPlayer) {
-            if (((EntityPlayer) event.getEntityDismounted()).isUser()) {
-                ACsGuiApi.closeHudGui(VehicleHud.class);
-            }
+        if (!(event.getEntityDismounted() instanceof EntityPlayer) || !((EntityPlayer) event.getEntityDismounted()).isUser()) {
+            return;
         }
+        ACsGuiApi.closeHudGui(VehicleHud.class);
     }
 
     /* Gui events */
@@ -354,46 +360,11 @@ public class ClientEventHandler {
                 CameraSystem.drawDebug();
             }
         }
-        //renderBigEntities((float) partialTicks);
-
-        /*
-        GlStateManager.pushMatrix();
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(false);
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableLighting();
-        GlStateManager.disableCull();
-        GlStateManager.disableBlend();
-
-        x = y =z = 0;
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-
-        float f = MathHelper.cos(-0 * 0.017453292F - (float)Math.PI);
-        float f1 = MathHelper.sin(-0 * 0.017453292F - (float)Math.PI);
-        float f2 = -MathHelper.cos(-0 * 0.017453292F);
-        float f3 = MathHelper.sin(-0 * 0.017453292F);
-        Vec3d vec3d = new Vec3d((double)(f1 * f2), (double)f3, (double)(f * f2));
-
-        //Vec3d vec3d = MC.player.getLook((float) partialTicks);
-        Vector3f vector3f = Vector3fPool.get(vec3d);
-        if(MC.player.getRidingEntity() instanceof BaseVehicleEntity) {
-            Quaternion q = QuaternionPool.get();
-            DynamXMath.slerp((float) partialTicks, ((BaseVehicleEntity<?>) MC.player.getRidingEntity()).renderRotation, ((BaseVehicleEntity<?>) MC.player.getRidingEntity()).renderRotation, q);
-            vector3f = DynamXGeometry.rotateVectorByQuaternion(vector3f, q);
+        if(!isRenderingEntitiesWithOptifineShaders) {
+            renderBigEntities((float) partialTicks);
+        } else {
+            isRenderingEntitiesWithOptifineShaders = false;
         }
-        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos(x, y + (double)MC.player.getEyeHeight(), z).color(0, 255, 255, 255).endVertex();
-        bufferbuilder.pos(x + vector3f.x * 20.0D, y + (double)MC.player.getEyeHeight() + vector3f.y * 20.0D, z + vector3f.z * 20.0D).color(0, 255, 255, 255).endVertex();
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableLighting();
-        GlStateManager.enableCull();
-        GlStateManager.disableBlend();
-        GlStateManager.depthMask(true);
-        GlStateManager.popMatrix();
-         */
     }
 
     /**
