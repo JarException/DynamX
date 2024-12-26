@@ -15,6 +15,7 @@ import fr.dynamx.client.renders.scene.IRenderContext;
 import fr.dynamx.client.renders.scene.node.SceneNode;
 import fr.dynamx.client.renders.scene.node.SimpleNode;
 import fr.dynamx.common.entities.modules.WheelsModule;
+import fr.dynamx.common.entities.modules.engines.BoatPropellerModule;
 import fr.dynamx.utils.client.ClientDynamXUtils;
 import fr.dynamx.utils.debug.DynamXDebugOptions;
 import fr.dynamx.utils.maths.DynamXMath;
@@ -84,13 +85,18 @@ public class SteeringWheelInfo extends BasePart<ModularVehicleInfo> implements I
             //Translate to the steering wheel rotation point
             transformToRotationPoint();
             //Rotate the steering wheel
-            int directingWheel = VehicleEntityProperties.getPropertyIndex(packInfo.getDirectingWheel(), VehicleEntityProperties.EnumVisualProperties.STEER_ANGLE);
             if (context.getEntity() != null && context.getEntity().hasModuleOfType(WheelsModule.class)) {
+                int directingWheel = VehicleEntityProperties.getPropertyIndex(packInfo.getDirectingWheel(), VehicleEntityProperties.EnumVisualProperties.STEER_ANGLE);
                 WheelsModule m = context.getEntity().getModuleByType(WheelsModule.class);
                 if (m.visualProperties.length > directingWheel) {
                     float angle = -(m.prevVisualProperties[directingWheel] + (m.visualProperties[directingWheel] - m.prevVisualProperties[directingWheel]) * context.getPartialTicks()) * DynamXMath.TO_RADIAN;
                     transform.rotate(angle, 0F, 0F, 1F);
                 }
+            } else if (context.getEntity() != null && context.getEntity().hasModuleOfType(BoatPropellerModule.class)) {
+                BoatPropellerModule module = context.getEntity().getModuleByType(BoatPropellerModule.class);
+                float angle = module.getPrevPhysicsSteeringForce()+ (module.getPhysicsSteeringForce() - module.getPrevPhysicsSteeringForce() ) * context.getPartialTicks();
+                angle = angle * 6;
+                transform.rotate(angle, 0F, 0F, 1F);
             }
             GlStateManager.pushMatrix();
             GlStateManager.multMatrix(ClientDynamXUtils.getMatrixBuffer(transform));

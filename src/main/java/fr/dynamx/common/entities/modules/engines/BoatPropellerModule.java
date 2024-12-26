@@ -4,6 +4,9 @@ import com.jme3.math.Vector3f;
 import fr.dynamx.api.contentpack.object.IPackInfoReloadListener;
 import fr.dynamx.api.entities.VehicleEntityProperties;
 import fr.dynamx.api.entities.modules.IVehicleController;
+import fr.dynamx.api.network.sync.EntityVariable;
+import fr.dynamx.api.network.sync.SynchronizationRules;
+import fr.dynamx.api.network.sync.SynchronizedEntityVariable;
 import fr.dynamx.client.handlers.hud.BoatController;
 import fr.dynamx.common.contentpack.type.vehicle.BoatEngineInfo;
 import fr.dynamx.common.contentpack.type.vehicle.BoatPropellerInfo;
@@ -14,6 +17,7 @@ import fr.dynamx.common.physics.entities.BoatPhysicsHandler;
 import fr.dynamx.common.physics.entities.parts.engine.AutomaticGearboxHandler;
 import fr.dynamx.common.physics.entities.parts.engine.Engine;
 import fr.dynamx.common.physics.entities.parts.engine.GearBox;
+import fr.dynamx.utils.DynamXConstants;
 import fr.dynamx.utils.maths.DynamXGeometry;
 import fr.dynamx.utils.optimization.Vector3fPool;
 import lombok.Getter;
@@ -25,14 +29,24 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+@SynchronizedEntityVariable.SynchronizedPhysicsModule(modid = DynamXConstants.ID)
 public class BoatPropellerModule extends BasicEngineModule implements IPackInfoReloadListener {
     @Getter
     protected BoatEngineInfo engineInfo;
     protected BoatPropellerInfo info;
+    @Getter
     protected BoatPropellerHandler propellerPhysicsHandler;
     protected BoatPhysicsHandler<?> boatPhysicsHandler;
     @Getter
     protected float bladeAngle;
+
+    /**
+     * Synchronized to rotate the steering wheel angle accordingly
+     */
+    @SynchronizedEntityVariable(name = "steering_force")
+    protected final EntityVariable<Float> steeringForce = new EntityVariable<>(SynchronizationRules.CONTROLS_TO_SPECTATORS, Float.MAX_VALUE);
+    @Getter
+    protected float prevPhysicsSteeringForce;
 
     public BoatPropellerModule(BoatEntity<?> entityEntity) {
         super(entityEntity);
@@ -48,8 +62,8 @@ public class BoatPropellerModule extends BasicEngineModule implements IPackInfoR
         super.onPackInfosReloaded();
     }
 
-    public BoatPropellerHandler getPropellerPhysicsHandler() {
-        return propellerPhysicsHandler;
+    public float getPhysicsSteeringForce() {
+        return steeringForce.get();
     }
 
     @Override
@@ -70,9 +84,11 @@ public class BoatPropellerModule extends BasicEngineModule implements IPackInfoR
     @Override
     public void postUpdatePhysics(boolean simulatingPhysics) {
         super.postUpdatePhysics(simulatingPhysics);
+        prevPhysicsSteeringForce = steeringForce.get();
         if (simulatingPhysics && engineInfo != null) {
             this.getEngineProperties()[VehicleEntityProperties.EnumEngineProperties.REVS.ordinal()] = propellerPhysicsHandler.getEngine().getRevs();
             this.getEngineProperties()[VehicleEntityProperties.EnumEngineProperties.ACTIVE_GEAR.ordinal()] = propellerPhysicsHandler.getGearBox().getActiveGearNum();
+            steeringForce.set(propellerPhysicsHandler.getPhysicsSteeringForce());
         }
     }
 
