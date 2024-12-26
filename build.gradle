@@ -120,6 +120,7 @@ shadowJar {
     duplicatesStrategy 'exclude'
     configurations = [project.configurations.shadow]
     classifier = 'all'
+    exclude "module-info.class"
 }
 
 reobf {
