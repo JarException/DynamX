@@ -17,8 +17,11 @@
 }
 
 #network_warning {
-    top: 110px;
+    top: 2px;
+    left: 2px;
     color: red;
+    text-shadow: none;
+    padding-left: 10px;
 }
 
 .root > .hud_item {
