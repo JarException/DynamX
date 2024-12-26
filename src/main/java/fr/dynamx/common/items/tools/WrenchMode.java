@@ -352,7 +352,7 @@ public class WrenchMode {
                             SeatsModule seats = ((IModuleContainer.ISeatsContainer) baseVehicleEntity).getSeats();
                             Entity seatRider = seats.getSeatToPassengerMap().get(partSeat);
                             if (seatRider == null) {
-                                partSeat.mount(baseVehicleEntity, seatsModule, entity);
+                                partSeat.mountEntity(baseVehicleEntity, seatsModule, entity);
                                 context.sendMessage(new TextComponentString("Entity added to vehicle"));
                                 return;
                             }

@@ -37,14 +37,14 @@ public class DynamXLoadingTasks {
                 if (taskContext == TaskContext.CLIENT && !taskContext.isSinglePlayer() && DynamXConfig.syncPacks) {
                     DynamXMain.log.debug("Requesting pack sync...");
                     DynamXContext.getNetwork().sendToServer(new MessagePacksHashs(PackSyncHandler.getObjects()));
-                } else if(taskContext != TaskContext.MC_INIT) {
+                } else if (taskContext != TaskContext.MC_INIT) {
                     DynamXUtils.hotswapWorldPackInfos(DynamXMain.proxy.getClientWorld());
                     if (taskContext.isSinglePlayer())
                         DynamXUtils.hotswapWorldPackInfos(DynamXMain.proxy.getServerWorld());
                 }
             } else if (taskContext == TaskContext.SERVER_RUNNING) {
-                DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(true, DynamXConfig.mountedVehiclesSyncTickRate, ContentPackLoader.getBlocksGrip(), ContentPackLoader.slopes, ContentPackLoader.SLOPES_LENGTH, ContentPackLoader.PLACE_SLOPES, DynamXContext.getPhysicsSimulationMode(Side.CLIENT), -1), EnumPacketTarget.ALL);
-                for(World w : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
+                DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(true, -1), EnumPacketTarget.ALL);
+                for (World w : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
                     DynamXUtils.hotswapWorldPackInfos(w);
                 }
             }

@@ -7,7 +7,7 @@ import fr.aym.acsguis.component.style.ComponentStyleManager;
 import fr.aym.acsguis.component.textarea.GuiLabel;
 import fr.aym.acsguis.component.textarea.UpdatableGuiLabel;
 import fr.aym.acsguis.cssengine.selectors.EnumSelectorContext;
-import fr.aym.acsguis.cssengine.style.EnumCssStyleProperties;
+import fr.aym.acsguis.cssengine.style.EnumCssStyleProperty;
 import fr.aym.acsguis.utils.GuiConstants;
 import fr.dynamx.api.entities.IModuleContainer;
 import fr.dynamx.api.entities.VehicleEntityProperties;
@@ -171,16 +171,16 @@ public class CarController extends BaseController {
 
             speedometer.add(new GuiLabel("" + i).setCssClass("rpm_letter").getStyle().addAutoStyleHandler(new AutoStyleHandler<ComponentStyleManager>() {
                 @Override
-                public boolean handleProperty(EnumCssStyleProperties property, EnumSelectorContext context, ComponentStyleManager target) {
-                    if (property == EnumCssStyleProperties.LEFT) {
+                public boolean handleProperty(EnumCssStyleProperty property, EnumSelectorContext context, ComponentStyleManager target) {
+                    if (property == EnumCssStyleProperty.LEFT) {
                         target.getXPos().setAbsolute(-(float) x, GuiConstants.ENUM_RELATIVE_POS.END);
                         return true;
                     }
-                    if (property == EnumCssStyleProperties.TOP) {
+                    if (property == EnumCssStyleProperty.TOP) {
                         target.getYPos().setAbsolute((float) y);
                         return true;
                     }
-                    if (property == EnumCssStyleProperties.COLOR) {
+                    if (property == EnumCssStyleProperty.COLOR) {
                         if (angle > Math.PI - Math.PI / 3) {
                             target.setForegroundColor(0xFFE23F3F);
                         }
@@ -190,8 +190,8 @@ public class CarController extends BaseController {
                 }
 
                 @Override
-                public Collection<EnumCssStyleProperties> getModifiedProperties(ComponentStyleManager target) {
-                    return Arrays.asList(EnumCssStyleProperties.LEFT, EnumCssStyleProperties.TOP, EnumCssStyleProperties.COLOR);
+                public Collection<EnumCssStyleProperty> getModifiedProperties(ComponentStyleManager target) {
+                    return Arrays.asList(EnumCssStyleProperty.LEFT, EnumCssStyleProperty.TOP, EnumCssStyleProperty.COLOR);
                 }
             }).getOwner());
         }

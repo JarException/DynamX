@@ -13,7 +13,7 @@ import java.util.List;
  * Used on client side
  *
  * @see IPhysicsModule
- * @see IEngineModule
+ * @see fr.dynamx.common.entities.modules.engines.CarEngineModule
  */
 public interface IVehicleController {
     /**

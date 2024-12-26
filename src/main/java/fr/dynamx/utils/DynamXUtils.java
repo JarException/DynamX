@@ -3,7 +3,7 @@ package fr.dynamx.utils;
 import com.google.common.base.Predicates;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import de.javagl.jgltf.model.NodeModel;
+import de.javagl.jgltf.dynamx.model.NodeModel;
 import fr.dynamx.api.contentpack.ContentPackType;
 import fr.dynamx.api.contentpack.object.IPackInfoReloadListener;
 import fr.dynamx.api.contentpack.object.IPartContainer;

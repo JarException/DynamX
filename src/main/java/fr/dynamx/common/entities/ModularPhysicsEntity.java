@@ -125,7 +125,6 @@ public abstract class ModularPhysicsEntity<T extends AbstractEntityPhysicsHandle
         }
         //Init them before sorting because listened functions may change
         getListenerModules();
-        //SynchronizedVariablesRegistry.setSyncVarsForContext(world.isRemote ? Side.CLIENT : Side.SERVER, new HashMap<>(), getNetwork());
         return true;
     }
 

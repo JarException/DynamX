@@ -27,7 +27,6 @@ public class CmdRefreshChunks implements ISubCommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (args.length - 1 >= 0) System.arraycopy(args, 1, args, 0, args.length - 1);
         if (args.length == 7) {
             int x1 = Math.min(parseInt(args[1]), parseInt(args[4]));
             int y1 = Math.min(parseInt(args[2]), parseInt(args[5]));
@@ -42,18 +41,20 @@ public class CmdRefreshChunks implements ISubCommand {
                 for (int y = y1; y <= y2; y += 2) {
                     for (int z = z1; z <= z2; z += 2) {
                         po.setPos(x >> 4, y >> 4, z >> 4);
-                        if (!poses.contains(po)) {
-                            VerticalChunkPos imm = po.toImmutable();
-                            DynamXContext.getPhysicsWorld(sender.getEntityWorld()).getTerrainManager().onChunkChanged(imm);
-                            poses.add(imm);
-                            count++;
+                        if (poses.contains(po)) {
+                            continue;
                         }
+                        VerticalChunkPos imm = po.toImmutable();
+                        DynamXContext.getPhysicsWorld(sender.getEntityWorld()).getTerrainManager().onChunkChanged(imm);
+                        poses.add(imm);
+                        count++;
                     }
                 }
             }
             sender.sendMessage(new TextComponentString("Reloaded " + count + " collision chunks"));
-        } else
+        } else {
             throw new WrongUsageException("/dynamx " + getUsage());
+        }
     }
 
     @Override

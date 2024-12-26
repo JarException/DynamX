@@ -88,7 +88,7 @@ public class GuiSlopesConfig extends GuiFrame {
     }
 
     private void setupBlacklist(SlopeBuildingConfig config, GuiScrollPane pane) {
-        pane.removeAllChilds();
+        pane.removeAllChildren();
         for (Block bo : config.getBlackList()) {
             ResourceLocation bl = bo.getRegistryName();
             pane.add(new GuiLabel(bl.toString()).setCssClass("blacklist_block").addClickListener((x, y, bt) -> {

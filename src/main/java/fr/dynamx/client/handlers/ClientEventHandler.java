@@ -16,6 +16,7 @@ import fr.dynamx.common.DynamXMain;
 import fr.dynamx.common.blocks.DynamXBlock;
 import fr.dynamx.common.blocks.TEDynamXBlock;
 import fr.dynamx.common.contentpack.type.objects.BlockObject;
+import fr.dynamx.common.entities.IDynamXObject;
 import fr.dynamx.common.entities.PackPhysicsEntity;
 import fr.dynamx.common.entities.PhysicsEntity;
 import fr.dynamx.common.entities.PropsEntity;
@@ -71,6 +72,12 @@ public class ClientEventHandler {
     public static final Minecraft MC = Minecraft.getMinecraft();
     public static UUID renderingEntity;
     public static RenderPlayer renderPlayer;
+    /**
+     * There are two choices: <br/>
+     * - When Optifine is enabled with shaders, the {@link fr.dynamx.common.core.mixin.MixinRenderGlobal} renders the big entities behind the player's chunk <br>
+     * - When there is no Optifine/shaders are disabled, the big entities are rendered in the RenderWorldLast event, here
+     */
+    public static boolean isRenderingEntitiesWithOptifineShaders;
 
     /* Placing block */
     private DxModelRenderer model;
@@ -95,13 +102,15 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent.EntityInteract event) {
         EntityPlayer player = event.getEntityPlayer();
-        if (player.world.isRemote) {
-            if (event.getTarget() instanceof PhysicsEntity && event.getHand().equals(EnumHand.MAIN_HAND) && !(event.getEntityPlayer().getHeldItem(event.getHand()).getItem() instanceof DynamXItemSpawner)) {
-                DynamXContext.getNetwork().sendToServer(new MessageEntityInteract(event.getTarget().getEntityId()));
-                event.setCanceled(true);
-                event.setCancellationResult(EnumActionResult.SUCCESS);
-            }
+        if (!player.world.isRemote) {
+            return;
         }
+        if (!(event.getTarget() instanceof PhysicsEntity) || !event.getHand().equals(EnumHand.MAIN_HAND) || event.getEntityPlayer().getHeldItem(event.getHand()).getItem() instanceof DynamXItemSpawner) {
+            return;
+        }
+        DynamXContext.getNetwork().sendToServer(new MessageEntityInteract(event.getTarget().getEntityId()));
+        event.setCanceled(true);
+        event.setCancellationResult(EnumActionResult.SUCCESS);
     }
 
     @SubscribeEvent
@@ -113,20 +122,18 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onMount(VehicleEntityEvent.EntityMount event) {
-        if (event.getEntityMounted() instanceof EntityPlayer) {
-            if (((EntityPlayer) event.getEntityMounted()).isUser()) {
-                ACsGuiApi.asyncLoadThenShowHudGui("Vehicle HUD", () -> new VehicleHud((IModuleContainer.ISeatsContainer) event.getEntity()));
-            }
+        if (!(event.getEntityMounted() instanceof EntityPlayer) || !((EntityPlayer) event.getEntityMounted()).isUser()) {
+            return;
         }
+        ACsGuiApi.asyncLoadThenShowHudGui("Vehicle HUD", () -> new VehicleHud((IModuleContainer.ISeatsContainer) event.getEntity()));
     }
 
     @SubscribeEvent
     public void onDismount(VehicleEntityEvent.EntityDismount event) {
-        if (event.getEntityDismounted() instanceof EntityPlayer) {
-            if (((EntityPlayer) event.getEntityDismounted()).isUser()) {
-                ACsGuiApi.closeHudGui();
-            }
+        if (!(event.getEntityDismounted() instanceof EntityPlayer) || !((EntityPlayer) event.getEntityDismounted()).isUser()) {
+            return;
         }
+        ACsGuiApi.closeHudGui(VehicleHud.class);
     }
 
     /* Gui events */
@@ -177,7 +184,7 @@ public class ClientEventHandler {
                 ResourceLocation loc = null;
                 if (MC.objectMouseOver.entityHit instanceof PackPhysicsEntity) {
                     InteractivePart part = ((PackPhysicsEntity<?, ?>) MC.objectMouseOver.entityHit).getHitPart(MC.player);
-                    if (part != null && part.canInteract(MC.objectMouseOver.entityHit, MC.player)) {
+                    if (part != null && part.canInteract((IDynamXObject) MC.objectMouseOver.entityHit, MC.player)) {
                         loc = part.getHudCursorTexture();
                     } else if (MC.objectMouseOver.entityHit instanceof PropsEntity) {
                         loc = new ResourceLocation(DynamXConstants.ID, "textures/focus.png");
@@ -186,7 +193,7 @@ public class ClientEventHandler {
                     TileEntity te = MC.world.getTileEntity(MC.objectMouseOver.getBlockPos());
                     if (te instanceof TEDynamXBlock) {
                         InteractivePart part = ((TEDynamXBlock) te).getHitPart(MC.player);
-                        if (part != null && part.canInteract(null, MC.player)) {
+                        if (part != null && part.canInteract((IDynamXObject) te, MC.player)) {
                             loc = part.getHudCursorTexture();
                         }
                     }
@@ -353,84 +360,69 @@ public class ClientEventHandler {
                 CameraSystem.drawDebug();
             }
         }
-        renderBigEntities((float) partialTicks);
-
-        /*
-        GlStateManager.pushMatrix();
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(false);
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableLighting();
-        GlStateManager.disableCull();
-        GlStateManager.disableBlend();
-
-        x = y =z = 0;
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-
-        float f = MathHelper.cos(-0 * 0.017453292F - (float)Math.PI);
-        float f1 = MathHelper.sin(-0 * 0.017453292F - (float)Math.PI);
-        float f2 = -MathHelper.cos(-0 * 0.017453292F);
-        float f3 = MathHelper.sin(-0 * 0.017453292F);
-        Vec3d vec3d = new Vec3d((double)(f1 * f2), (double)f3, (double)(f * f2));
-
-        //Vec3d vec3d = MC.player.getLook((float) partialTicks);
-        Vector3f vector3f = Vector3fPool.get(vec3d);
-        if(MC.player.getRidingEntity() instanceof BaseVehicleEntity) {
-            Quaternion q = QuaternionPool.get();
-            DynamXMath.slerp((float) partialTicks, ((BaseVehicleEntity<?>) MC.player.getRidingEntity()).renderRotation, ((BaseVehicleEntity<?>) MC.player.getRidingEntity()).renderRotation, q);
-            vector3f = DynamXGeometry.rotateVectorByQuaternion(vector3f, q);
+        if(!isRenderingEntitiesWithOptifineShaders) {
+            renderBigEntities((float) partialTicks);
+        } else {
+            isRenderingEntitiesWithOptifineShaders = false;
         }
-        bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos(x, y + (double)MC.player.getEyeHeight(), z).color(0, 255, 255, 255).endVertex();
-        bufferbuilder.pos(x + vector3f.x * 20.0D, y + (double)MC.player.getEyeHeight() + vector3f.y * 20.0D, z + vector3f.z * 20.0D).color(0, 255, 255, 255).endVertex();
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableLighting();
-        GlStateManager.enableCull();
-        GlStateManager.disableBlend();
-        GlStateManager.depthMask(true);
-        GlStateManager.popMatrix();
-         */
     }
 
-    private static void renderBigEntities(float partialTicks) {
+    /**
+     * This method is part of the big entities rendering fix <br>
+     * It resets the wasRendered field of all DynamX entities to false
+     */
+    public static void resetBigEntities() {
+        for (Entity e : MC.world.loadedEntityList) {
+            if (e instanceof PhysicsEntity) {
+                ((PhysicsEntity<?>) e).wasRendered = false;
+            }
+        }
+    }
+
+    /**
+     * This method is part of the big entities rendering fix <br>
+     * It renders all the DynamX entities that weren't rendered by the normal renderer, but are in the camera frustum and SHOULD be rendered
+     *
+     * @param partialTicks The partial render ticks
+     */
+    public static void renderBigEntities(float partialTicks) {
         boolean setup = false;
         Entity entity = MC.getRenderViewEntity();
+        if (entity == null) {
+            return;
+        }
         ICamera icamera = null;
         double d0 = 0, d1 = 0, d2 = 0;
 
         for (Entity e : MC.world.loadedEntityList) {
-            if (e instanceof PhysicsEntity) {
-                if (!((PhysicsEntity<?>) e).wasRendered) {
-                    if (!setup) {
-                        GlStateManager.pushMatrix();
-                        RenderHelper.enableStandardItemLighting();
-                        MC.entityRenderer.enableLightmap();
-                        icamera = new Frustum();
+            if (!(e instanceof PhysicsEntity)) {
+                continue;
+            }
+            if (((PhysicsEntity<?>) e).wasRendered) {
+                continue;
+            }
+            if (!setup) {
+                GlStateManager.pushMatrix();
+                RenderHelper.enableStandardItemLighting();
+                MC.entityRenderer.enableLightmap();
+                icamera = new Frustum();
 
-                        d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
-                        d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
-                        d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
-                        icamera.setPosition(d0, d1, d2);
+                d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
+                d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
+                d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
+                icamera.setPosition(d0, d1, d2);
 
-                        d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
-                        d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
-                        d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
-                        setup = true;
-                    }
-                    boolean flag = MC.getRenderManager().shouldRender(e, icamera, d0, d1, d2) || e.isRidingOrBeingRiddenBy(MC.player);
-
-                    if (flag) {
-                        boolean flag1 = MC.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase) MC.getRenderViewEntity()).isPlayerSleeping();
-
-                        if ((e != MC.getRenderViewEntity() || MC.gameSettings.thirdPersonView != 0 || flag1) && (e.posY < 0.0D || e.posY >= 256.0D || MC.world.isBlockLoaded(e.getPosition()))) {
-                            MC.getRenderManager().renderEntityStatic(e, partialTicks, false);
-                        }
-                    }
-                }
-                ((PhysicsEntity<?>) e).wasRendered = false;
+                d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
+                d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
+                d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+                setup = true;
+            }
+            if (!MC.getRenderManager().shouldRender(e, icamera, d0, d1, d2) && !e.isRidingOrBeingRiddenBy(MC.player)) {
+                continue;
+            }
+            boolean flag1 = MC.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase) MC.getRenderViewEntity()).isPlayerSleeping();
+            if ((e != MC.getRenderViewEntity() || MC.gameSettings.thirdPersonView != 0 || flag1) && (e.posY < 0.0D || e.posY >= 256.0D || MC.world.isBlockLoaded(e.getPosition()))) {
+                MC.getRenderManager().renderEntityStatic(e, partialTicks, false);
             }
         }
         if (setup) {

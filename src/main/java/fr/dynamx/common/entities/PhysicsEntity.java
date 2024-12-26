@@ -143,12 +143,16 @@ public abstract class PhysicsEntity<T extends AbstractEntityPhysicsHandler<?, ?>
         // Network Init
         synchronizer = DynamXMain.proxy.getNetHandlerForEntity(this);
         usesPhysicsWorld = DynamXContext.usesPhysicsWorld(world);
+
+        ignoreFrustumCheck = true;
     }
 
     public PhysicsEntity(World world, Vector3f pos, float spawnRotationAngle) {
         this(world);
         setPosition(pos.x, pos.y, pos.z);
         rotationYaw = spawnRotationAngle;
+
+        ignoreFrustumCheck = true;
     }
 
     @Override
@@ -183,7 +187,8 @@ public abstract class PhysicsEntity<T extends AbstractEntityPhysicsHandler<?, ?>
                 }
             case ONLY_ENTITY_PROPERTIES:
                 initPhysicsEntity(usesPhysicsWorld);
-                getSynchronizer().setSimulationHolder(getSynchronizer().getDefaultSimulationHolder(), null);
+                // Will refresh simulation holders on joint entities
+                getSynchronizer().setSimulationHolder(getSynchronizer().getSimulationHolder(), getSynchronizer().getSimulationPlayerHolder());
                 registerSynchronizedVariables();
                 MinecraftForge.EVENT_BUS.post(new PhysicsEntityEvent.Init(world.isRemote ? Side.CLIENT : Side.SERVER, this, usesPhysicsWorld));
                 initialized = EnumEntityInitState.ALL;

@@ -100,6 +100,7 @@ public class EntityPosVariable extends ListeningEntityVariable<EntityPosVariable
                 return positionData;
             }
         });
+        this.set(new EntityPositionData(false, entity.physicsPosition, entity.physicsRotation));
     }
 
     public static class EntityPositionData {

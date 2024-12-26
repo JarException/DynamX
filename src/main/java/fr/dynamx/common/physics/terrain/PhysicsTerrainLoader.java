@@ -66,7 +66,7 @@ public class PhysicsTerrainLoader {
                     profiler.end(Profiler.Profiles.TERRAIN_LOADER_TICK);
                     return;
                 }
-                chk.getTicket().incrStatusIndex("Loading async"); //Invalidate other loading processes
+                chk.getTicket().incrStatusIndex(); //Invalidate other loading processes
                 collision.loadCollisionsAsync(manager, manager.getCache(), chk.getTicket(), Vector3fPool.get(lookingAt.x * 16, lookingAt.y * 16, lookingAt.z * 16)).exceptionally(e -> {
                     DynamXMain.log.fatal("Failed to async-load chunk " + chk.getTicket(), e);
                     return null;

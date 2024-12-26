@@ -114,7 +114,7 @@ public class CmdChunkControl implements ISubCommand {
                     if (graph == null)
                         sender.sendMessage(new TextComponentString(TextFormatting.RED + "Chunk ticket not found !"));
                     else {
-                        graph.setLoaded(physicsWorld.getTerrainManager().getTerrainState(), collisions);
+                        graph.setLoaded(collisions);
                         physicsWorld.getTerrainManager().onChunkChanged(pos);
                         sender.sendMessage(new TextComponentString(TextFormatting.GRAY + "Reloading this chunk..."));
                     }

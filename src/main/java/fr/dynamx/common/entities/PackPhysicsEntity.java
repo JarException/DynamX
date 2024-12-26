@@ -149,11 +149,6 @@ public abstract class PackPhysicsEntity<T extends PackEntityPhysicsHandler<A, ?>
     }
 
     @Override
-    public boolean isInRangeToRenderDist(double range) {
-        return (getPackInfo() == null || getPackInfo().getRenderDistance() == -1) ? super.isInRangeToRenderDist(range) : getPackInfo().getRenderDistance() >= range;
-    }
-
-    @Override
     public ItemStack getPickedResult(RayTraceResult target) {
         return packInfo.getPickedResult(getMetadata());
     }

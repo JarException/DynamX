@@ -30,7 +30,7 @@ import net.minecraft.util.ResourceLocation;
  * @param <T> The owner of this part. Should implement ISubInfoTypeOwner<?>.
  */
 @Getter
-public abstract class BasePart<T extends ISubInfoTypeOwner<?>> extends SubInfoType<T> {
+public abstract class BasePart<T extends ISubInfoTypeOwner<T>> extends SubInfoType<T> {
     /**
      * Deprecated properties of BasePart: <br>
      * - ShapePosition -> Position <br>

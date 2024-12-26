@@ -22,6 +22,7 @@ import fr.dynamx.client.renders.scene.SceneBuilder;
 import fr.dynamx.client.renders.scene.node.SceneNode;
 import fr.dynamx.client.renders.scene.node.SimpleNode;
 import fr.dynamx.common.DynamXContext;
+import fr.dynamx.common.blocks.TEDynamXBlock;
 import fr.dynamx.common.contentpack.type.objects.AbstractItemObject;
 import fr.dynamx.common.entities.PackPhysicsEntity;
 import fr.dynamx.common.entities.modules.AbstractLightsModule;
@@ -42,6 +43,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Contains multiple {@link LightObject}
@@ -151,6 +153,11 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
     }
 
     @Override
+    public void addBlockModules(TEDynamXBlock blockEntity, ModuleListBuilder modules) {
+        addModules(null, modules);
+    }
+
+    @Override
     public String getName() {
         return "PartLightSource with name " + getPartName();
     }
@@ -196,10 +203,28 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
      */
     public void postLoad() {
         Map<String, TextureVariantData> nameToVariant = new HashMap<>();
-        byte nextTextureId = 0;
-        TextureVariantData data = new TextureVariantData(baseMaterial, nextTextureId);
+        AtomicReference<Byte> nextTextureId = new AtomicReference<>((byte) 0);
+        TextureVariantData data = new TextureVariantData(baseMaterial, nextTextureId.get());
         variantsMap.put(data.getId(), data);
         nameToVariant.put(baseMaterial, data);
+
+        // Add all variants from the model, so when the lights are off, they use the correct texture
+        if (owner instanceof IModelTextureVariantsSupplier) {
+            //TODO SEPARATE FUNCTION
+            IModelTextureVariantsSupplier.IModelTextureVariants variants = ((IModelTextureVariantsSupplier) owner).getMainObjectVariants();
+            if (variants != null) {
+                variants.getTextureVariants().forEach((id, variant) -> {
+                    if (nameToVariant.containsKey(variant.getName())) {
+                        return;
+                    }
+                    nameToVariant.put(variant.getName(), variant);
+                    variantsMap.put(variant.getId(), variant);
+                    if (variant.getId() >= nextTextureId.get()) {
+                        nextTextureId.set((byte) (variant.getId() + 1));
+                    }
+                });
+            }
+        }
 
         List<LightObject> sources = getSources();
         for (LightObject source : sources) {
@@ -210,7 +235,7 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
                     if (nameToVariant.containsKey(name)) {
                         source.getBlinkTextures().add(nameToVariant.get(name));
                     } else {
-                        data = new TextureVariantData(name, ++nextTextureId);
+                        data = new TextureVariantData(name, nextTextureId.getAndSet((byte) (nextTextureId.get() + 1)));
                         source.getBlinkTextures().add(data);
                         variantsMap.put(data.getId(), data);
                         nameToVariant.put(name, data);
@@ -245,7 +270,7 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
             /* Rendering light sources */
             boolean isEntity = context instanceof BaseRenderContext.EntityRenderContext && ((BaseRenderContext.EntityRenderContext) context).getEntity() != null;
             AbstractLightsModule lights = isEntity ? ((BaseRenderContext.EntityRenderContext) context).getEntity().getModuleByType(AbstractLightsModule.class) :
-                    context instanceof BaseRenderContext.BlockRenderContext && ((BaseRenderContext.BlockRenderContext) context).getTileEntity() != null ? ((BaseRenderContext.BlockRenderContext) context).getTileEntity().getLightsModule() : null;
+                    context instanceof BaseRenderContext.BlockRenderContext && ((BaseRenderContext.BlockRenderContext) context).getTileEntity() != null ? ((BaseRenderContext.BlockRenderContext) context).getTileEntity().getModuleByType(AbstractLightsModule.class) : null;
             transformToRotationPoint();
             /* Rendering light source */
             LightObject onLightObject = null;
@@ -277,8 +302,8 @@ public class PartLightSource extends SubInfoType<ILightOwner<?>> implements ISub
                     }
                 }
             }
-            //for testing only isOn = onLightObject != null;
-            byte texId = 0;
+            // Use current model texture when off
+            byte texId = context.getTextureId();
             if (isOn && !onLightObject.getBlinkTextures().isEmpty()) {
                 activeStep = activeStep % onLightObject.getBlinkTextures().size();
                 texId = onLightObject.getBlinkTextures().get(activeStep).getId();

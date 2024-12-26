@@ -30,7 +30,7 @@ public class DynamXGuiHandler implements IGuiHandler {
             if(!(te instanceof TEDynamXBlock))
                 return null;
             TEDynamXBlock block = (TEDynamXBlock) te;
-            IInventory inventory = block.getStorageModule() != null ? block.getStorageModule().getInventory((byte) (ID-2)) : null;
+            IInventory inventory = block.hasModuleOfType(StorageModule.class) ? block.getModuleByType(StorageModule.class).getInventory((byte) (ID-2)) : null;
             return inventory == null ? null : new ContainerChest(player.inventory, inventory, player);
         }
         return null;
@@ -50,7 +50,7 @@ public class DynamXGuiHandler implements IGuiHandler {
             if(!(te instanceof TEDynamXBlock))
                 return null;
             TEDynamXBlock block = (TEDynamXBlock) te;
-            IInventory inventory = block.getStorageModule() != null ? block.getStorageModule().getInventory((byte) (ID-2)) : null;
+            IInventory inventory = block.hasModuleOfType(StorageModule.class) ? block.getModuleByType(StorageModule.class).getInventory((byte) (ID-2)) : null;
             return inventory == null ? null : new GuiChest(player.inventory, inventory);
         }
         return null;

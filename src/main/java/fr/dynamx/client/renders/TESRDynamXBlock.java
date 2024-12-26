@@ -63,7 +63,6 @@ public class TESRDynamXBlock<T extends TEDynamXBlock> extends TileEntitySpecialR
     }
 
     public boolean shouldRenderDebug() {
-        return ClientDebugSystem.enableDebugDrawing && (DynamXDebugOptions.PLAYER_TO_OBJECT_COLLISION_DEBUG.isActive()
-                || DynamXDebugOptions.SEATS_AND_STORAGE.isActive() || DynamXDebugOptions.PLAYER_COLLISIONS.isActive());
+        return ClientDebugSystem.enableDebugDrawing;
     }
 }

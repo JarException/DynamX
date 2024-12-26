@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RegisteredSubInfoType(name = "prop", registries = SubInfoTypeRegistries.BLOCKS, strictName = false)
-public class PropObject<T extends PropObject<?>> extends AbstractProp<T> implements IPhysicsPackInfo,
+public class PropObject<T extends PropObject<T>> extends AbstractProp<T> implements IPhysicsPackInfo,
         ISubInfoType<BlockObject<?>>, ParticleEmitterInfo.IParticleEmitterContainer {
     @IPackFilePropertyFixer.PackFilePropertyFixer(registries = {SubInfoTypeRegistries.BLOCKS, SubInfoTypeRegistries.PROPS})
     public static final IPackFilePropertyFixer PROPERTY_FIXER = (object, key, value) -> {

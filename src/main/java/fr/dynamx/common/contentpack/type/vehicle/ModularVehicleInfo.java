@@ -310,7 +310,7 @@ public class ModularVehicleInfo extends AbstractItemObject<ModularVehicleInfo, M
 
     @Override
     public IModelTextureVariantsSupplier.IModelTextureVariants getTextureVariantsFor(ObjObjectRenderer objObjectRenderer) {
-        PartLightSource src = getLightSource(objObjectRenderer.getObjObjectData().getName());
+        PartLightSource src = objObjectRenderer != null ? getLightSource(objObjectRenderer.getObjObjectData().getName()) : null;
         if (src != null)
             return src;
         return getVariants();

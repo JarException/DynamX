@@ -1,6 +1,6 @@
 package fr.dynamx.client;
 
-import com.modularmods.mcgltf.MCglTF;
+import com.modularmods.mcgltf.dynamx.MCglTF;
 import fr.aym.acslib.ACsLib;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
 import fr.aym.acslib.api.services.error.ErrorLevel;
@@ -23,7 +23,6 @@ import fr.dynamx.common.DynamXMain;
 import fr.dynamx.common.contentpack.DynamXObjectLoaders;
 import fr.dynamx.common.contentpack.loader.InfoList;
 import fr.dynamx.common.contentpack.type.objects.ArmorObject;
-import fr.dynamx.common.objloader.MTLLoader;
 import fr.dynamx.common.objloader.OBJLoader;
 import fr.dynamx.utils.DynamXConstants;
 import fr.dynamx.utils.DynamXLoadingTasks;
