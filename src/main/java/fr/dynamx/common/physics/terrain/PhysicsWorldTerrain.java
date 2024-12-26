@@ -156,7 +156,7 @@ public class PhysicsWorldTerrain implements ITerrainManager {
             if (ticket.getStatus() == ChunkState.LOADED)
                 ticket.setLoading();
             else
-                ticket.incrStatusIndex("Higher priority"); //This will cancel current loading operations
+                ticket.incrStatusIndex(); //This will cancel current loading operations
             //Set chunk used before loading it : this will avoid weird async errors
             subscribeToChunk(ticket);
             switch (priority) {
@@ -274,8 +274,8 @@ public class PhysicsWorldTerrain implements ITerrainManager {
             ChunkLoadingTicket ticket = toffer.getSnap().getTicket();
             if (isDebug)
                 ChunkGraph.addToGrah(ticket.getPos(), ChunkGraph.ChunkActions.HOTSWAP, ChunkGraph.ActionLocation.MAIN, offer, "ASYNC LOAD Ticket " + ticket + " " + toffer.getSnap().getSnapIndex());
-            ticket.incrStatusIndex("Loaded async"); //Invalidate other loading operations
-            ticket.setLoaded(terrainState, offer);  //Will remove the previous chunk from loaded terrain
+            ticket.incrStatusIndex(); //Invalidate other loading operations
+            ticket.setLoaded(offer);  //Will remove the previous chunk from loaded terrain
             if (getTerrainState().isLoadedAnywhere(offer.getPos()))
                 addUsedChunk(ticket, false); //Add the new chunk to the physics world. FIX : ONLY IF IT'S USED
             ticket.fireLoadedCallback(); //Call this after adding the chunk : the callback may ask for a new load of this ticket
@@ -320,7 +320,7 @@ public class PhysicsWorldTerrain implements ITerrainManager {
         ChunkCollisions coll = isDebug ? new DebugChunkCollisions(getWorld(), pos, getPhysicsWorld()) : new ChunkCollisions(getWorld(), pos);
         if (isDebug)
             ChunkGraph.addToGrah(pos, ChunkGraph.ChunkActions.LOAD_NOW, ChunkGraph.ActionLocation.MAIN, coll, "Ticket " + ticket);
-        ticket.incrStatusIndex("Load now"); //When we start to load the chunk, we can consider it's the more up-to-date version, and we are in the physics thread, so very good
+        ticket.incrStatusIndex(); //When we start to load the chunk, we can consider it's the more up-to-date version, and we are in the physics thread, so very good
         coll.loadCollisionsSync(this, getCache(), ticket, Vector3fPool.get(pos.x * 16, pos.y * 16, pos.z * 16), profiler);
         ticket.fireLoadedCallback(); //Call this after adding the chunk : the callback may ask for a new load of this ticket
         profiler.end(Profiler.Profiles.EMERGENCY_CHUNK_LOAD);

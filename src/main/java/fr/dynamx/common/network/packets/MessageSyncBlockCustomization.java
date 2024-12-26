@@ -53,7 +53,7 @@ public class MessageSyncBlockCustomization implements IDnxPacket, IMessageHandle
                     te.setRelativeScale(message.relativeScale);
                     te.setRelativeRotation(message.relativeRotation);
                     te.markDirty();
-                    te.markCollisionsDirty();
+                    te.markCollisionsDirty(true);
                     world.markBlockRangeForRenderUpdate(message.blockPos, message.blockPos);
                 }
             }

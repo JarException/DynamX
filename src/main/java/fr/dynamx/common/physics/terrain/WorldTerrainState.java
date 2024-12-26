@@ -88,7 +88,7 @@ public class WorldTerrainState
             ChunkLoadingTicket ticket = terrain.removeTicket(pos); //Will cancel current loading processes
             if (terrain.isDebug())
                 ChunkGraph.addToGrah(ticket.getPos(), ChunkGraph.ChunkActions.CHK_UNLOAD, ChunkGraph.ActionLocation.MAIN, ticket.getCollisions(), "Ticket " + ticket);
-            ticket.setUnloaded(this); //will prevent loadings
+            ticket.setUnloaded(); //will prevent loadings
             terrain.getCache().invalidate(ticket, false, false);
             //unload the collision.
         }

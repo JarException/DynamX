@@ -201,7 +201,7 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
             DynamXMain.log.warn("Block object info is null for te " + this + " at " + pos + ". Removing it.");
             world.setBlockToAir(pos);
         } else {
-            markCollisionsDirty();
+            markCollisionsDirty(false);
         }
     }
 
@@ -238,7 +238,7 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
 
     public void setRotation(int rotation) {
         this.rotation = rotation;
-        markCollisionsDirty();
+        markCollisionsDirty(true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -324,14 +324,16 @@ public class TEDynamXBlock extends TileEntity implements IDynamXObject, IPackInf
     /**
      * Invalidates the block collisions caches, and reloads them <br>
      * Will provoke lag if you call this each tick
+     *
+     * @param updatePhysicsTerrain True to recompute the {@link fr.dynamx.common.physics.terrain.chunk.ChunkCollisions} of the chunk, for collisions of the {@link fr.dynamx.api.physics.IPhysicsWorld}
      */
-    public void markCollisionsDirty() {
+    public void markCollisionsDirty(boolean updatePhysicsTerrain) {
         if (world != null) {
             removeChunkCollisions();
         }
         boundingBoxCache = null;
         unrotatedCollisionsCache.clear();
-        if (world != null && DynamXContext.usesPhysicsWorld(world)) {
+        if (updatePhysicsTerrain && world != null && DynamXContext.usesPhysicsWorld(world)) {
             VerticalChunkPos pos1 = new VerticalChunkPos(getPos().getX() >> 4, getPos().getY() >> 4, getPos().getZ() >> 4);
             if (DynamXConfig.enableDebugTerrainManager) {
                 ChunkLoadingTicket ticket = DynamXContext.getPhysicsWorld(world).getTerrainManager().getTicket(pos1);

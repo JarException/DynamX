@@ -140,7 +140,7 @@ public class GuiBlockCustomization extends GuiFrame {
             teBlock.setRelativeTranslation(relativeTrans);
             teBlock.setRelativeScale(relativeScale);
             teBlock.setRelativeRotation(relativeRotation);
-            teBlock.markCollisionsDirty();
+            teBlock.markCollisionsDirty(true);
         });
 
         add(rotationLabel);

@@ -60,8 +60,8 @@ public class RemoteTerrainCache implements ITerrainCache {
     }
 
     @Override
-    public void invalidate(ChunkLoadingTicket pos, boolean changed, boolean syncChanges) {
-        invalidate(pos.getPos(), changed, syncChanges);
+    public void invalidate(ChunkLoadingTicket ticket, boolean changed, boolean syncChanges) {
+        invalidate(ticket.getPos(), changed, syncChanges);
     }
 
     @Override
