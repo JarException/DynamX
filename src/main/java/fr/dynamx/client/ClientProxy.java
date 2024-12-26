@@ -1,7 +1,9 @@
 package fr.dynamx.client;
 
+import fr.aym.acsguis.api.ACsGuiApiService;
 import fr.aym.acslib.ACsLib;
 import fr.aym.acslib.api.services.ThreadedLoadingService;
+import fr.aym.mps.utils.UserErrorMessageException;
 import fr.dynamx.api.physics.IPhysicsWorld;
 import fr.dynamx.client.handlers.ClientEventHandler;
 import fr.dynamx.client.handlers.KeyHandler;
@@ -27,6 +29,7 @@ import fr.dynamx.common.network.sync.SPPhysicsEntitySynchronizer;
 import fr.dynamx.common.network.udp.CommandUdp;
 import fr.dynamx.common.physics.entities.AbstractEntityPhysicsHandler;
 import fr.dynamx.common.physics.world.BuiltinThreadedPhysicsWorld;
+import fr.dynamx.utils.DynamXConstants;
 import fr.dynamx.utils.DynamXLoadingTasks;
 import fr.dynamx.utils.client.CommandNetworkDebug;
 import fr.dynamx.utils.client.DynamXRenderUtils;
@@ -48,6 +51,9 @@ import net.minecraftforge.fml.client.SplashProgress;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.function.Predicate;
@@ -193,6 +199,21 @@ public class ClientProxy extends CommonProxy implements ISelectiveResourceReload
 
     @Override
     public void schedulePacksInit() {
+        try {
+            VersionRange versionRange = VersionRange.createFromVersionSpec(DynamXConstants.ACSGUIS_REQUIRED_VERSION);
+            ACsGuiApiService service = ACsLib.getPlatform().provideService(ACsGuiApiService.class);
+            if (!versionRange.containsVersion(new DefaultArtifactVersion(service.getVersion()))) {
+                DynamXMain.log.fatal("Invalid version of ACsGuis found: {}. Expected to be in {}. Halting game loading at pre init.", service.getVersion(), versionRange);
+                DynamXMain.memoizedConstructionError = new UserErrorMessageException("Invalid ACsGuis version " + service.getVersion(), null,
+                        "Invalid ACsGuis version " + service.getVersion(),
+                        "This version of DynamX requires a version of ACsGuis in range " + versionRange + ".",
+                        "We advise you to install version " + DynamXConstants.DEFAULT_ACSGUIS_VERSION + " of ACsGuis.");
+                return;
+            }
+        } catch (InvalidVersionSpecificationException e) {
+            throw new RuntimeException("Bad ACSGUIS_REQUIRED_VERSION", e);
+        }
+
         //This event handler needs to be registered before mc's sound system init
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
