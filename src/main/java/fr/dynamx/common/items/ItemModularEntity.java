@@ -24,7 +24,7 @@ public abstract class ItemModularEntity extends DynamXItemSpawner<ModularVehicle
         maxStackSize = 1;
         setCreativeTab(modulableVehicleInfo.getCreativeTab(DynamXItemRegistry.vehicleTab));
 
-        textureNum = modulableVehicleInfo.getMaxTextureMetadata();
+        textureNum = modulableVehicleInfo.getMaxVariantId();
         if (textureNum > 1)
             setHasSubtypes(true);
     }

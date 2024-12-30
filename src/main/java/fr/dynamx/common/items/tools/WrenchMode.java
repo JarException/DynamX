@@ -313,7 +313,7 @@ public class WrenchMode {
             if (targetEntity instanceof BaseVehicleEntity) {
                 BaseVehicleEntity<?> vehicleEntity = (BaseVehicleEntity<?>) targetEntity;
                 //TODO TAKE HIDDEN VARIANTS IN ACCOUNT
-                if (vehicleEntity.getMetadata() + 1 < vehicleEntity.getPackInfo().getMaxTextureMetadata()) {
+                if (vehicleEntity.getMetadata() + 1 < vehicleEntity.getPackInfo().getMaxVariantId()) {
                     vehicleEntity.setMetadata(vehicleEntity.getMetadata() + 1);
                 } else {
                     vehicleEntity.setMetadata(0);

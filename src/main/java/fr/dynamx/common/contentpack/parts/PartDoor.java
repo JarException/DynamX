@@ -352,6 +352,16 @@ public class PartDoor extends InteractivePart<BaseVehicleEntity<?>, ModularVehic
         return getOwner().getTextureVariantsFor(objObjectRenderer);
     }
 
+    @Override
+    public boolean hasTextureVariants() {
+        return getOwner().hasTextureVariants();
+    }
+
+    @Override
+    public byte getMaxVariantId() {
+        return getOwner().getMaxVariantId();
+    }
+
     class PartDoorNode<A extends IModelPackObject> extends SimpleNode<BaseRenderContext.EntityRenderContext, A> {
         public PartDoorNode(PartDoor door, Vector3f scale, List<SceneNode<BaseRenderContext.EntityRenderContext, A>> linkedChilds) {
             super(door.getCarAttachPoint(), null, PartDoor.this.isAutomaticPosition, scale, linkedChilds);

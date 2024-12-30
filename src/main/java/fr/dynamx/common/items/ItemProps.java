@@ -25,7 +25,7 @@ public class ItemProps<T extends PropObject<T>> extends DynamXItemSpawner<T> {
         super(itemInfo);
         setCreativeTab(itemInfo.getCreativeTab(DynamXItemRegistry.objectTab));
 
-        textureNum = itemInfo.getMaxTextureMetadata();
+        textureNum = itemInfo.getMaxVariantId();
         if (textureNum > 1) {
             setHasSubtypes(true);
             setMaxDamage(0);

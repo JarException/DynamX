@@ -34,7 +34,7 @@ public interface IModelTextureVariantsSupplier extends INamedObject {
      * @return True if this supplier has varying textures (more textures than the default texture) <br>
      * If you return false, and this model is registered twice, this texture supplier can be replaced by the other one
      */
-    default boolean hasVaryingTextures() {
+    default boolean hasTextureVariants() {
         return false;
     }
 
@@ -46,6 +46,8 @@ public interface IModelTextureVariantsSupplier extends INamedObject {
     default boolean canRenderPart(String partName) {
         return true;
     }
+
+    byte getMaxVariantId();
 
     interface IModelTextureVariants {
         TextureVariantData getDefaultVariant();

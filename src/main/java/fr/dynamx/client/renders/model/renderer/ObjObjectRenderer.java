@@ -83,8 +83,14 @@ public class ObjObjectRenderer {
 
     public void setTextureVariants(ObjModelRenderer model, IModelTextureVariantsSupplier.IModelTextureVariants variants) {
         for (TextureVariantData variant : variants.getTextureVariants().values()) {
+            // The variant may, or may not, be added as a separated Material/as a texture in the material
+            // Let's check that
+            // Base/default variant should always be added.
+            // 1. If the variant exists as a Material, add it.
             boolean usesVariant = variant.getId() == 0 || model.getMaterials().containsKey(variant.getName());
-            if (!usesVariant) { //search variant in used textures
+            if (!usesVariant) {
+                // 2. If a material has a texture with the same name as the variant
+                // This obj object is actually using this  variant
                 for (String materialName : objObjectData.getMaterialForEachVertex()) {
                     Material material = model.getMaterials().get(materialName);
                     if (material != null && material.diffuseTexture.containsKey(variant.getName())) {
@@ -93,8 +99,10 @@ public class ObjObjectRenderer {
                     }
                 }
             }
-            if (usesVariant)
+            // If the variant is used, let's add it and create a vao for it
+            if (usesVariant) {
                 modelRenderData.put(variant.getId(), new VariantRenderData(variants.getDefaultVariant(), variant));
+            }
         }
     }
 

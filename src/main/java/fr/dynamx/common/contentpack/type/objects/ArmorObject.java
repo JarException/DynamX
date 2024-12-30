@@ -106,12 +106,13 @@ public class ArmorObject<T extends ArmorObject<T>> extends AbstractItemObject<T,
     }
 
     @Override
-    public boolean hasVaryingTextures() {
+    public boolean hasTextureVariants() {
         return getVariants() != null;
     }
 
-    public int getMaxTextureMetadata() {
-        return getVariants() != null ? getVariants().getVariantsMap().size() : 1;
+    @Override
+    public byte getMaxVariantId() {
+        return (byte) (hasTextureVariants() ? getVariants().getVariantsMap().size() : 1);
     }
 
     @Override

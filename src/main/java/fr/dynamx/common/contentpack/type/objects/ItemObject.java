@@ -54,6 +54,11 @@ public class ItemObject<T extends ItemObject<T>> extends AbstractItemObject<T, T
     }
 
     @Override
+    public byte getMaxVariantId() {
+        return 0;
+    }
+
+    @Override
     public SceneNode<?, ?> getSceneGraph() {
         if (sceneNode == null) {
             if (isModelValid()) {

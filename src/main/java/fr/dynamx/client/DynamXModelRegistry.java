@@ -87,9 +87,9 @@ public class DynamXModelRegistry implements IPackInfoReloadListener {
             if (location.getFormat() == EnumDxModelFormats.GLTF) {
                 MCglTF.getInstance().registerModel(location);
             }
-        } else if (customTextures != null && customTextures.hasVaryingTextures()) {
+        } else if (customTextures != null && customTextures.hasTextureVariants()) {
             IModelTextureVariantsSupplier previousSupplier = MODELS_REGISTRY.get(location);
-            if (previousSupplier == null || !previousSupplier.hasVaryingTextures()) {
+            if (previousSupplier == null || !previousSupplier.hasTextureVariants()) {
                 log.debug("Replacing model texture supplier of '" + location + "' from '" + previousSupplier + "' to '" + customTextures + "' : the previous doesn't have custom textures");
                 MODELS_REGISTRY.put(location, customTextures);
                 if (location.getFormat() == EnumDxModelFormats.GLTF) {

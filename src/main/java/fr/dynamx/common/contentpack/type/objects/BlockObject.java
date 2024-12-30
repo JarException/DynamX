@@ -99,7 +99,7 @@ public class BlockObject<T extends BlockObject<T>> extends AbstractProp<T> imple
     @Override
     public IModelTextureVariants getTextureVariantsFor(ObjObjectRenderer objObjectRenderer) {
         PartLightSource src = objObjectRenderer != null ? getLightSource(objObjectRenderer.getObjObjectData().getName()) : null;
-        return src != null ? src : super.getTextureVariantsFor(objObjectRenderer);
+        return src != null ? src.getVariants() : super.getTextureVariantsFor(objObjectRenderer);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class BlockObject<T extends BlockObject<T>> extends AbstractProp<T> imple
         //Map lights
         lightSources.values().forEach(PartLightSource::postLoad);
         collisionsHelper.loadCollisions(this, DynamXUtils.getModelPath(getPackName(), model), "", translation, 0, useComplexCollisions, scaleModifier, ObjectCollisionsHelper.CollisionType.BLOCK);
-        if (hasVaryingTextures() && getMaxTextureMetadata() > 16 && (getCreativeTabName() == null || !getCreativeTabName().equalsIgnoreCase("None"))) {
+        if (hasTextureVariants() && getMaxVariantId() > 16 && (getCreativeTabName() == null || !getCreativeTabName().equalsIgnoreCase("None"))) {
             DynamXErrorManager.addError(getPackName(), DynamXErrorManager.PACKS_ERRORS, "too_many_variants", ErrorLevel.HIGH, getName(), "You can't use more than 16 variants on blocks !");
         }
         return super.postLoad(hot);

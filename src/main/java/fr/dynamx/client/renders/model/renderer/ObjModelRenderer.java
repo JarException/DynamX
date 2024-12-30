@@ -49,11 +49,13 @@ public class ObjModelRenderer extends DxModelRenderer {
             for (ObjObjectRenderer object : objObjects) {
                 loadingObject = object;
                 object.clearVAO();
-                if (object.getObjObjectData().getMaterials().isEmpty() || getTextureVariants() == null)
+                if (object.getObjObjectData().getMaterials().isEmpty() || getTextureVariants() == null) {
                     continue;
+                }
                 IModelTextureVariantsSupplier.IModelTextureVariants variants = this.getTextureVariants().getTextureVariantsFor(object);
-                if (variants != null)
+                if (variants != null) {
                     object.setTextureVariants(this, variants);
+                }
             }
         } catch (Exception e) {
             DynamXErrorManager.addError(textureVariants != null ? textureVariants.getPackName() : "Non-pack model", DynamXErrorManager.MODEL_ERRORS, "obj_error", ErrorLevel.HIGH, getLocation().getModelPath().toString(), (loadingObject == null ? null : loadingObject.getObjObjectData().getName()), e);

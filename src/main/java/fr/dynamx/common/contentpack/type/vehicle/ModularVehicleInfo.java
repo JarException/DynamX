@@ -312,17 +312,18 @@ public class ModularVehicleInfo extends AbstractItemObject<ModularVehicleInfo, M
     public IModelTextureVariantsSupplier.IModelTextureVariants getTextureVariantsFor(ObjObjectRenderer objObjectRenderer) {
         PartLightSource src = objObjectRenderer != null ? getLightSource(objObjectRenderer.getObjObjectData().getName()) : null;
         if (src != null)
-            return src;
+            return src.getVariants();
         return getVariants();
     }
 
     @Override
-    public boolean hasVaryingTextures() {
+    public boolean hasTextureVariants() {
         return getVariants() != null;
     }
 
-    public int getMaxTextureMetadata() {
-        return hasVaryingTextures() ? getVariants().getVariantsMap().size() : 1;
+    @Override
+    public byte getMaxVariantId() {
+        return (byte) (hasTextureVariants() ? getVariants().getVariantsMap().size() : 1);
     }
 
     @Override

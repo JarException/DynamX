@@ -36,7 +36,7 @@ public class DynamXItemArmor<T extends ArmorObject<?>> extends ItemArmor impleme
         setTranslationKey(DynamXConstants.ID + "." + armorInfo.getFullName().toLowerCase() + "_" + armorType.getName());
         setCreativeTab(armorInfo.getCreativeTab(DynamXItemRegistry.objectTab));
         DynamXItemRegistry.add(this);
-        textureNum = armorInfo.getMaxTextureMetadata();
+        textureNum = armorInfo.getMaxVariantId();
         if (textureNum > 1) {
             setHasSubtypes(true);
             setMaxDamage(0);

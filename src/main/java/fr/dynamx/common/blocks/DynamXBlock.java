@@ -64,7 +64,7 @@ public class DynamXBlock<T extends BlockObject<?>> extends Block implements IDyn
         super(blockObjectInfo.getMaterial());
         setInfo(blockObjectInfo);
         setCreativeTab(blockObjectInfo.getCreativeTab(DynamXItemRegistry.objectTab));
-        textureNum = Math.min(16, blockObjectInfo.getMaxTextureMetadata());
+        textureNum = Math.min(16, blockObjectInfo.getMaxVariantId());
         isDxModel = blockObjectInfo.isDxModel();
 
         initBlock(DynamXConstants.ID);
