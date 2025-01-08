@@ -26,7 +26,6 @@ public class CmdNetworkConfig implements ISubCommand {
     public static boolean TRACK_SYNC;
     //public static boolean SERVER_INTERPOL;
     public static int SERVER_NET_DEBUG;
-    public static float SMOOTHY;
 
     @Override
     public String getName() {
@@ -35,7 +34,7 @@ public class CmdNetworkConfig implements ISubCommand {
 
     @Override
     public String getUsage() {
-        return getName() + " <doTrackSync|syncCrit|sync_buff|syncDelay|SMOOTHY|epsilon|resyncId> - for Aym'";
+        return getName() + " <doTrackSync|syncCrit|sync_buff|syncDelay|epsilon|resyncId> - for Aym'";
     }
 
     @Override
@@ -46,7 +45,6 @@ public class CmdNetworkConfig implements ISubCommand {
             r.add("syncCrit");
             r.add("sync_buff");
             r.add("syncDelay");
-            r.add("SMOOTHY");
             r.add("epsilon");
             r.add("printNetDebug");
             r.add("resyncId");
@@ -89,9 +87,6 @@ public class CmdNetworkConfig implements ISubCommand {
                 DynamXContext.getNetwork().sendToClient(new MessageSyncConfig(false, -1), EnumPacketTarget.ALL);
             }
             server.getPlayerList().sendMessage(new TextComponentString("Changed sync delay to " + DynamXConfig.mountedVehiclesSyncTickRate));
-        } else if (args[0].equalsIgnoreCase("SMOOTHY")) {
-            SMOOTHY = parseFloat(args[1]);
-            sender.sendMessage(new TextComponentString("SMOOTHY is " + SMOOTHY));
         } else if (args[0].equalsIgnoreCase("epsilon")) {
             SyncTracker.EPS = parseFloat(args[1]);
             sender.sendMessage(new TextComponentString("Sync epsilon is now " + SyncTracker.EPS));

@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 
 public class EntityPosVariable extends ListeningEntityVariable<EntityPosVariable.EntityPositionData> {
     //TODO CLEAN
-    public static int CRITIC1 = 30, CRITIC1warn = 100, CRITIC2 = 400, CRITIC3 = 50;
+    public static int CRITIC1 = 3, CRITIC1warn = 100, CRITIC2 = 400, CRITIC3 = 50;
 
     public EntityPosVariable(PhysicsEntity<?> entity) {
         super(((entityPositionDataSynchronizedEntityVariable, entityPositionData) -> {
@@ -45,7 +45,6 @@ public class EntityPosVariable extends ListeningEntityVariable<EntityPosVariable
                 if (ignoreFor <= 0) {
                     Vector3f pos = entityPositionData.position;
                     float delta = entity.physicsPosition.subtract(pos).length();
-                    CRITIC1 = 3;
                     if (delta > CRITIC1) {
                         EntityPlayer controllingPlayer = entity.getSynchronizer().getSimulationPlayerHolder();
                         boolean isControllingPlayerRidingThisEntity = controllingPlayer == entity.getControllingPassenger();
