@@ -141,6 +141,7 @@ public class DynamXErrorManager {
         registerErrorFormatter(MODEL_ERRORS, "obj_error", FORMATTER_SINGLE_ERROR);
         registerErrorFormatter(MODEL_ERRORS, "obj_none_material", FORMATTER_MULTIPLE_ERROR_ONE_LI);
         registerErrorFormatter(PACKS_ERRORS, "deprecated_light_format", FORMATTER_MULTIPLE_ERROR);
+        registerErrorFormatter(PACKS_ERRORS, "duplicated_multi_light", FORMATTER_MULTIPLE_ERROR);
         registerErrorFormatter(PACKS_ERRORS, "wheel_invalid_suspaxis", FORMATTER_MULTIPLE_ERROR);
         registerErrorFormatter(PACKS_ERRORS, "too_many_variants", FORMATTER_MULTIPLE_ERROR);
         registerErrorFormatter(PACKS_ERRORS, "missing_depends_on_node", FORMATTER_MULTIPLE_ERROR_ONE_LI);

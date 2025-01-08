@@ -171,6 +171,10 @@ public class BlockObject<T extends BlockObject<T>> extends AbstractProp<T> imple
 
     @Override
     public void addLightSource(PartLightSource source) {
+        if (lightSources.containsKey(source.getObjectName())) {
+            DynamXErrorManager.addPackError(getPackName(), "duplicated_multi_light", ErrorLevel.HIGH, getName(), "Light named " + source.getPartName() + " on part " + source.getObjectName() + " is in conflict with " + lightSources.get(source.getObjectName()).getPartName());
+            return;
+        }
         lightSources.put(source.getObjectName(), source);
         addDrawablePart(source);
     }
